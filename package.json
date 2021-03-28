@@ -1,0 +1,22 @@
+{
+  "name": "wa2000",
+  "version": "0.0.1",
+  "description": "Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS v12",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deivu/WA2000.git"
+  },
+  "author": "Deivu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Deivu/WA2000/issues"
+  },
+  "homepage": "https://github.com/Deivu/WA2000#readme",
+  "keywords": [
+    "discord.js",
+    "api",
+    "ratelimits",
+    "node"
+  ]
+}
