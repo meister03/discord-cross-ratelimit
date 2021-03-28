@@ -18,5 +18,9 @@
     "api",
     "ratelimits",
     "node"
-  ]
+  ],
+  "dependencies": {
+    "discord.js": "github:discordjs/discord.js",
+    "kurasuta": "github:Deivu/Kurasuta"
+  }
 }
