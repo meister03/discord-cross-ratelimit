@@ -1,4 +1,6 @@
+const { Util } = require('kurasuta');
 const KashimaRESTManager = require('../ratelimits/client/KashimaRequestManager.js');
+
 const op = 'Walther-WA2000';
 
 // I'm a fucking weeb so why not?
@@ -33,7 +35,6 @@ class TsundereUtil {
     }
 
     static ReplaceClientRest() {
-        const { Util } = require('kurasuta');
         Util.startCluster = manager => {
             const Cluster = require(manager.path);
             const cluster = new Cluster(manager);

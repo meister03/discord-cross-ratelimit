@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-const { GenerateIPCRequest } = require('../../util/TsundereUtil.js');
+const TsundereUtil = require('../../util/TsundereUtil.js');
 const KashimaRequestHandler = require('./KashimaRequestHandler.js');
 const Router = require('./Router.js');
 
@@ -25,7 +25,7 @@ class KashimaRESTManager extends RESTManager {
     }
 
     async append(endpoint) {
-        const request = GenerateIPCRequest();
+        const request = TsundereUtil.GenerateIPCRequest();
         request.endpoint = endpoint;
         request.update = false;
         const response = await this.server.send(request, { receptive: true });
@@ -38,7 +38,7 @@ class KashimaRESTManager extends RESTManager {
     }
 
     async update(endpoint, headers) {
-        const request = GenerateIPCRequest();
+        const request = TsundereUtil.GenerateIPCRequest();
         request.endpoint = endpoint;
         request.update = true;
         request.headers = headers;

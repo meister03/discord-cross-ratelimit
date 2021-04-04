@@ -1,6 +1,6 @@
 const { resolve } = require('path');
+const TsundereUtil = require('../util/TsundereUtil.js');
 const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
-const { Baka } = require('../util/TsundereUtil.js');
 
 // Based on D.JS old handling, but reworked to handle ratelimits synced per process
 class DiscordRatelimit {
@@ -57,7 +57,7 @@ class DiscordRatelimit {
         }
         // Global ratelimits, this thing will halt the whole manager if hit
         if (global) {
-            this.manager.timeout = Baka(this.after);
+            this.manager.timeout = TsundereUtil.Baka(this.after);
             await this.manager.timeout;
             this.manager.timeout = null;
         }
@@ -75,14 +75,13 @@ class DiscordRatelimit {
     // This is a private method just dont call it
     wait() {
         // Rejoice you can still do your query
-        if (!this.limited) return Baka();
+        if (!this.limited) return TsundereUtil.Baka();
         // Debug handled ratelimit
         this.debug();
         // If this exists, means we hit global timeout, on other request that isn't in this endpoint
         if (this.manager.timeout) return this.manager.timeout;
         // if not then just calculate the timeout in this route then wait it out
-        return Baka(this.timeout); 
-        
+        return TsundereUtil.Baka(this.timeout);
     }
 }
 
