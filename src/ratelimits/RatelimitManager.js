@@ -1,6 +1,6 @@
 
 const { Collection, Constants } = require('discord.js');
-const { GetOpKey, GenerateReplyInfo } = require('../util/TsundereUtil.js');
+const { op, GenerateReplyInfo } = require('../util/TsundereUtil.js');
 const RatelimitQueue = require('./RatelimitQueue.js');
 
 class RatelimitManager {
@@ -48,7 +48,7 @@ class RatelimitManager {
     listen() {
         if (this.ready) return;
         this.server.on('message', message => {
-            if (!message || message.op !== GetOpKey) return;
+            if (!message || message.op !== op) return;
             // This OP should be "ALWAYS RECEPTIVE"
             this.handleMessage(message)
                 .then(() => this.handleSuccess(message))

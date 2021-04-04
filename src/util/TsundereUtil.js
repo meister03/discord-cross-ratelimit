@@ -1,9 +1,10 @@
 const KashimaRESTManager = require('../ratelimits/client/KashimaRequestManager.js');
+const op = 'Walther-WA2000';
 
 // I'm a fucking weeb so why not?
 class TsundereUtil {
-    static get GetOpKey() {
-        return 'Walther-WA2000';
+    static get op() {
+        return op;
     }
 
     static Baka(ms) {
@@ -12,7 +13,7 @@ class TsundereUtil {
 
     static GenerateIPCRequest() {
         return {
-            op: TsundereUtil.GetOpKey,
+            op,
             // note to self, dont forget to send endpoint
             endpoint: null,
             // update is true when we send headers, while false if we just check
