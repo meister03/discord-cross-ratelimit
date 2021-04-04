@@ -1,20 +1,23 @@
 
-const { Collection } = require('discord.js');
+const { Collection, Constants } = require('discord.js');
 const { GetOpKey, GenerateReplyInfo } = require('../util/TsundereUtil.js');
 const RatelimitQueue = require('./RatelimitQueue.js');
 
 class RatelimitManager {
-    constructor(wa2000, base) {
+    constructor(wa2000) {
         this.ready = false;
         this.wa2000 = wa2000;
-        this.base = base;
-        this.server = wa2000.ipc.server;
+        this.base = `${Constants.DefaultOptions.http.api}/v${Constants.DefaultOptions.http.version}`;
         this.handlers = new Collection();
         // Global Timeout
         this.timeout = null;
         // Sweep inactive ratelimit buckets
-        if (wa2000.clientOptions.restSweepInterval > 0) 
-            this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), wa2000.clientOptions.restSweepInterval * 1000);
+        if (this.wa2000.sweepInterval > 0) 
+            this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.sweepInterval * 1000);
+    }
+
+    get server() {
+        return this.wa2000.manager.ipc.server;
     }
 
     update(endpoint, headers) {
