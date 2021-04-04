@@ -7,33 +7,34 @@ Your tsundere gun-girl that aims to integrate global ratelimits handling for Dis
   <img src="https://iopwiki.com/images/c/ce/WA2000_costume3.png">
 </p>
 
-### Note: Before using this, please ensure you have my custom fork of [Kurasuta](https://github.com/Deivu/Kurasuta)
+### Before using this, please ensure you have my custom fork of [Kurasuta](https://github.com/Deivu/Kurasuta)
+> Failure to use my fork of Kurasuta will make this module not work as intended
 
-# Features
-✅ Tsundere Gun-Girl
+## Features
 
-✅ Precious Waifu
+✅ Easy to use
 
-✅ Actually fixes your 429 problems on big sharded bots
+✅ Tsundere Gun-Girl Waifu
 
-# Example
+## Installation
+> npm i Deivu/Walther-WA2000 --save
+
+## Example
+> Running Wa2000 should be similar on how you do it with Kurasuta [Click Me](https://github.com/Deivu/Kurasuta#example), Except Your Index.JS will need minor changes
+
+### Example of index.js
 ```js
 const { ShardingManager } = require('kurasuta');
 const { join } = require('path');
 const Walther = require('wa2000');
-
 // Require Kurasuta as normal
 const manager = new ShardingManager(join(__dirname, 'main'), {
-	// your options here
+  // Kurasuta Options
 });
-
-// Require WA2000 first, then pass kurasuta manager on it
+// Require Walther-WA2000 
 const walther = new Walther(manager);
-
-// Call .spawn() from WA2000
+// Call spawn from "Walther-WA2000" not from "Kurasuta"
 walther.spawn();
 ```
 
-### Kashima uses this internally hence this is based on *her* structure
-
-### You can use this soon:tm:, if you are interested on becoming a beta tester once a beta build is available, contact me at Discord `@Sāya#0113` | [Guild](https://discord.gg/FVqbtGu)
+> Based from my Handling from `@Kashima`, Made with ❤ by @Sāya#0113

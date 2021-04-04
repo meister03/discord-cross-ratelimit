@@ -5,13 +5,11 @@ const RatelimitQueue = require('./RatelimitQueue.js');
 
 class RatelimitManager {
     constructor(wa2000) {
-        this.ready = false;
         this.wa2000 = wa2000;
         this.base = `${Constants.DefaultOptions.http.api}/v${Constants.DefaultOptions.http.version}`;
         this.handlers = new Collection();
-        // Global Timeout
+        this.ready = false;
         this.timeout = null;
-        // Sweep inactive ratelimit buckets
         if (this.wa2000.sweepInterval > 0) 
             this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.sweepInterval * 1000);
     }
