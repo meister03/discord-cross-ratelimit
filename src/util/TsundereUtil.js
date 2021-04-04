@@ -35,12 +35,14 @@ class TsundereUtil {
     }
 
     static ReplaceClientRest() {
-        Util.startCluster = manager => {
-            const Cluster = require(manager.path);
+        Util.startCluster = async manager => {
+            const imported = await import(manager.path);
+            const Cluster = imported.default ? imported.default : imported;
             const cluster = new Cluster(manager);
+            // Inject the custom rest
             cluster.client.rest = new KashimaRESTManager(cluster.client, cluster.client.options._tokenType);
             return cluster.init();
-        };
+        }; 
     }
 }
 
