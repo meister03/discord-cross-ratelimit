@@ -15,7 +15,7 @@ class Wa2000 extends EventEmitter {
 
     spawn() {
         if (isMaster) {
-            this.ratelimiteManager = new RatelimitManager(this);
+            this.ratelimitManager = new RatelimitManager(this);
             this.ratelimitManager.listen();
         }
         return this.manager.spawn();
