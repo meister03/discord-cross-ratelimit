@@ -1,5 +1,7 @@
+const OP = 'Walther-WA2000';
+
 module.exports = {
-    OP: 'Walther-WA2000',
+    OP,
     Wa2000BeingTsundere: (error = null) => {
         return {
             errored: !!error,
@@ -11,7 +13,7 @@ module.exports = {
     Wa2000Request: (endpoint, headers = null) => {
         if (!endpoint) throw new Error('Ugh, pass an endpoint, I can\'t make a ratelimit bucket without it, stupid...');
         return {
-            op: this.op,
+            op: OP,
             endpoint,
             update: !!headers,
             headers
