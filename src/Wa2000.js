@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const { ShardingManager } = require('kurasuta');
 const { isMaster } = require('cluster');
 const { Constants, Util } = require('discord.js');
+const TsundereUtil = require('./util/TsundereUtil.js');
 const RatelimitManager = require('./ratelimits/RatelimitManager.js');
 
 require('./util/TsundereUtil.js').ReplaceClientRest();
@@ -18,8 +19,9 @@ class Wa2000 extends EventEmitter {
         if (isMaster) {
             this.ratelimitManager = new RatelimitManager(this);
             this.ratelimitManager.listen();
+            return this.manager.spawn();
         }
-        return this.manager.spawn();
+        return TsundereUtil.startCluster(this.manager);
     }
 }
 
