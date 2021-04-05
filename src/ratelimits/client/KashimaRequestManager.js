@@ -16,6 +16,18 @@ class KashimaRESTManager extends RESTManager {
         delete this.globalDelay;
     }
 
+    static GenerateIPCRequest() {
+        return {
+            op: TsundereUtil.op,
+            // note to self, dont forget to send endpoint
+            endpoint: null,
+            // update is true when we send headers, while false if we just check
+            update: false,
+            // headers is needed when update is set to true, but if not then leave it
+            headers: null
+        };
+    }
+
     get server() {
         return this.client.shard.server;
     }
@@ -25,7 +37,7 @@ class KashimaRESTManager extends RESTManager {
     }
 
     async append(endpoint) {
-        const request = TsundereUtil.GenerateIPCRequest();
+        const request = KashimaRESTManager.GenerateIPCRequest();
         request.endpoint = endpoint;
         request.update = false;
         const response = await this.server.send(request, { receptive: true });
@@ -38,7 +50,7 @@ class KashimaRESTManager extends RESTManager {
     }
 
     async update(endpoint, headers) {
-        const request = TsundereUtil.GenerateIPCRequest();
+        const request = KashimaRESTManager.GenerateIPCRequest();
         request.endpoint = endpoint;
         request.update = true;
         request.headers = headers;

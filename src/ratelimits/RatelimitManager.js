@@ -1,6 +1,6 @@
 
 const { Collection, Constants } = require('discord.js');
-const { op, GenerateReplyInfo } = require('../util/TsundereUtil.js');
+const { op } = require('../util/TsundereUtil.js');
 const RatelimitQueue = require('./RatelimitQueue.js');
 
 class RatelimitManager {
@@ -12,6 +12,15 @@ class RatelimitManager {
         this.timeout = null;
         if (this.wa2000.sweepInterval > 0) 
             this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.sweepInterval * 1000);
+    }
+    
+    static GenerateReplyInfo() {
+        return {
+            errored: false,
+            name: null,
+            message: null,
+            stack: null
+        };
     }
 
     get server() {
@@ -62,11 +71,11 @@ class RatelimitManager {
     }
 
     handleSuccess(message) {
-        message.reply(GenerateReplyInfo);
+        message.reply(RatelimitManager.GenerateReplyInfo);
     }
 
     handleError(message, error) {
-        const info = GenerateReplyInfo();
+        const info = RatelimitManager.GenerateReplyInfo();
         info.errored = true;
         info.name = error.name;
         info.message = error.message;
