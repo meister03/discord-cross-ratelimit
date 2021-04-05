@@ -1,6 +1,6 @@
 
 const { Collection, Constants } = require('discord.js');
-const { op } = require('../util/TsundereUtil.js');
+const { OP, Wa2000BeingTsundere } = require('../Constants.js');
 const RatelimitQueue = require('./RatelimitQueue.js');
 
 class RatelimitManager {
@@ -12,15 +12,6 @@ class RatelimitManager {
         this.timeout = null;
         if (this.wa2000.sweepInterval > 0) 
             this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.sweepInterval * 1000);
-    }
-    
-    static GenerateReplyInfo() {
-        return {
-            errored: false,
-            name: null,
-            message: null,
-            stack: null
-        };
     }
 
     get server() {
@@ -57,11 +48,11 @@ class RatelimitManager {
         this.server.on('message', message => {
             if (!message) return;
             const data = message.data;
-            if (!data || op !== data.op) return;
+            if (!data || OP !== data.op) return;
             // This OP should be "ALWAYS RECEPTIVE"
             this.handleMessage(message.data)
-                .then(() => RatelimitManager.GenerateReplyInfo())
-                .catch(error => this.handleError(message, error));
+                .then(() => Wa2000BeingTsundere())
+                .catch(error => Wa2000BeingTsundere(error));
         });
         this.ready = true;
     }
@@ -70,15 +61,6 @@ class RatelimitManager {
         return update ? 
             this.update(endpoint, headers) :
             this.append(endpoint);
-    }
-
-    handleError(message, error) {
-        const info = RatelimitManager.GenerateReplyInfo();
-        info.errored = true;
-        info.name = error.name;
-        info.message = error.message;
-        info.stack = error.stack;
-        message.reply(info);
     }
 }
 
