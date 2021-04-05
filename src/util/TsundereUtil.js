@@ -1,12 +1,11 @@
-const { Util } = require('kurasuta');
+const { resolve } = require('path');
 const KashimaRESTManager = require('../ratelimits/client/KashimaRequestManager.js');
-
-const op = 'Walther-WA2000';
+const Op = 'Walther-WA2000';
 
 // I'm a fucking weeb so why not?
 class TsundereUtil {
     static get op() {
-        return op;
+        return Op;
     }
 
     static Baka(ms) {
@@ -15,7 +14,7 @@ class TsundereUtil {
 
     static GenerateIPCRequest() {
         return {
-            op,
+            op: Op,
             // note to self, dont forget to send endpoint
             endpoint: null,
             // update is true when we send headers, while false if we just check
@@ -35,11 +34,11 @@ class TsundereUtil {
     }
 
     static ReplaceClientRest() {
+        const Util = require.cache[resolve(require.resolve('kurasuta'))].exports.Util;
         Util.startCluster = async manager => {
             const imported = await import(manager.path);
             const Cluster = imported.default ? imported.default : imported;
             const cluster = new Cluster(manager);
-            // Inject the custom rest
             cluster.client.rest = new KashimaRESTManager(cluster.client, cluster.client.options._tokenType);
             return cluster.init();
         }; 

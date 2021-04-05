@@ -1,9 +1,10 @@
-require('./util/TsundereUtil.js').ReplaceClientRest();
 const EventEmitter = require('events');
 const { ShardingManager } = require('kurasuta');
 const { isMaster } = require('cluster');
 const { Constants, Util } = require('discord.js');
 const RatelimitManager = require('./ratelimits/RatelimitManager.js');
+
+require('./util/TsundereUtil.js').ReplaceClientRest();
 
 class Wa2000 extends EventEmitter {
     constructor(manager) {
