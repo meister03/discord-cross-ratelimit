@@ -51,8 +51,8 @@ class RatelimitManager {
             if (!data || OP !== data.op) return;
             // This OP should be "ALWAYS RECEPTIVE"
             this.handleMessage(message.data)
-                .then(() => Wa2000BeingTsundere())
-                .catch(error => Wa2000BeingTsundere(error));
+                .then(() => message.reply(Wa2000BeingTsundere()))
+                .catch(error => message.reply(Wa2000BeingTsundere(error)));
         });
         this.ready = true;
     }

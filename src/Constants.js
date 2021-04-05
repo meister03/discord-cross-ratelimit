@@ -1,6 +1,6 @@
 module.exports = {
     OP: 'Walther-WA2000',
-    Wa2000BeingTsundere: error => {
+    Wa2000BeingTsundere: (error = null) => {
         return {
             errored: !!error,
             name: error?.name,
