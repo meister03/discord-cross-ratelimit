@@ -60,7 +60,7 @@ class RatelimitManager {
             if (!data || op !== data.op) return;
             // This OP should be "ALWAYS RECEPTIVE"
             this.handleMessage(message)
-                .then(() => this.handleSuccess(message))
+                .then(() => RatelimitManager.GenerateReplyInfo())
                 .catch(error => this.handleError(message, error));
         });
         this.ready = true;
@@ -72,11 +72,7 @@ class RatelimitManager {
             this.update(endpoint, headers) :
             this.append(endpoint);
     }
-
-    handleSuccess(message) {
-        message.reply(RatelimitManager.GenerateReplyInfo);
-    }
-
+    
     handleError(message, error) {
         const info = RatelimitManager.GenerateReplyInfo();
         info.errored = true;
