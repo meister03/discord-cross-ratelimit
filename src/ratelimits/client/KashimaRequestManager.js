@@ -29,7 +29,7 @@ class KashimaRESTManager extends RESTManager {
     }
 
     get server() {
-        return this.client.shard.server;
+        return this.client.shard.ipc.server;
     }
 
     get api() {
