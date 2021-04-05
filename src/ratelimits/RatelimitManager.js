@@ -55,7 +55,9 @@ class RatelimitManager {
     listen() {
         if (this.ready) return;
         this.server.on('message', message => {
-            if (!message || message.op !== op) return;
+            if (!message) return;
+            const data = message.data;
+            if (!data || op !== data.op) return;
             // This OP should be "ALWAYS RECEPTIVE"
             this.handleMessage(message)
                 .then(() => this.handleSuccess(message))
@@ -64,7 +66,8 @@ class RatelimitManager {
         this.ready = true;
     }
 
-    handleMessage({ endpoint, update, headers }) {
+    handleMessage({ data }) {
+        const { endpoint, update, headers } = data;
         return update ? 
             this.update(endpoint, headers) :
             this.append(endpoint);
