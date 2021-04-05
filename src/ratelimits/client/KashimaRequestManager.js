@@ -1,5 +1,4 @@
 const { resolve } = require('path');
-const TsundereUtil = require('../../util/TsundereUtil.js');
 const KashimaRequestHandler = require('./KashimaRequestHandler.js');
 const Router = require('./Router.js');
 
@@ -18,7 +17,8 @@ class KashimaRESTManager extends RESTManager {
 
     static GenerateIPCRequest() {
         return {
-            op: TsundereUtil.op,
+            // I HATE CIRCULAR DEPENDENCIES AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            op: 'Walther-WA2000',
             // note to self, dont forget to send endpoint
             endpoint: null,
             // update is true when we send headers, while false if we just check
