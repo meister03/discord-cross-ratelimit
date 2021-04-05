@@ -34,8 +34,8 @@ class TsundereUtil {
     }
 
     static ReplaceClientRest() {
-        const Util = require.cache[resolve(require.resolve('kurasuta'))].exports.Util;
-        Util.startCluster = async manager => {
+        const Kurasuta = require.cache[resolve(require.resolve('kurasuta'))].exports;
+        Kurasuta.startCluster = async manager => {
             const imported = await import(manager.path);
             const Cluster = imported.default ? imported.default : imported;
             const cluster = new Cluster(manager);
