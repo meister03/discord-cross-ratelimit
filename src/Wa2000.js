@@ -5,8 +5,6 @@ const { Constants, Util } = require('discord.js');
 const TsundereUtil = require('./util/TsundereUtil.js');
 const RatelimitManager = require('./ratelimits/RatelimitManager.js');
 
-require('./util/TsundereUtil.js').ReplaceClientRest();
-
 class Wa2000 extends EventEmitter {
     constructor(manager) {
         super();
