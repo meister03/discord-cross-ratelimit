@@ -37,4 +37,7 @@ const walther = new Walther(manager);
 walther.spawn();
 ```
 
+### Example Bot
+https://github.com/Deivu/Kongou
+
 > Based from my Handling from `@Kashima`, Made with ❤ by @Sāya#0113
