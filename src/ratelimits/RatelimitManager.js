@@ -59,20 +59,19 @@ class RatelimitManager {
             const data = message.data;
             if (!data || op !== data.op) return;
             // This OP should be "ALWAYS RECEPTIVE"
-            this.handleMessage(message)
+            this.handleMessage(message.data)
                 .then(() => RatelimitManager.GenerateReplyInfo())
                 .catch(error => this.handleError(message, error));
         });
         this.ready = true;
     }
 
-    handleMessage({ data }) {
-        const { endpoint, update, headers } = data;
+    handleMessage({ endpoint, update, headers }) {
         return update ? 
             this.update(endpoint, headers) :
             this.append(endpoint);
     }
-    
+
     handleError(message, error) {
         const info = RatelimitManager.GenerateReplyInfo();
         info.errored = true;
