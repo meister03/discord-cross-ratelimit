@@ -7,17 +7,20 @@ const HTTPError = require(resolve(require.resolve('discord.js').replace('index.j
 const DiscordAPIError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/DiscordAPIError.js')));
 
 class KashimaRequestHandler {
-    static parseResponse(res) {
-        if (res.headers.get('content-type').startsWith('application/json')) return res.json();
-        return res.buffer();
-    }
-    constructor(manager) {
-        this.manager = manager;
+    constructor(manager, hash, { major }) {
+        this.manager = manager;        
+        this.hash = hash;
+        this.id = `${hash}:${major}`;
         this.queue = new AsyncQueue();
         this.retryAfter = -1;
     }
 
-    get _inactive() {
+    static parseResponse(res) {
+        if (res.headers.get('content-type').startsWith('application/json')) return res.json();
+        return res.buffer();
+    }
+
+    get inactive() {
         return this.queue.remaining === 0;
     }
     
@@ -34,7 +37,7 @@ class KashimaRequestHandler {
 
     async execute(request) {
         // Let master process "pause" this request until master process says its safe to resume due to ratelimits
-        await this.manager.append(request.route);    
+        await this.manager.send(this.id, request.route);    
         // Perform the request
         let res;
         try {
@@ -49,12 +52,14 @@ class KashimaRequestHandler {
         }
         if (res.headers) {
             // Build ratelimit info for master process
-            const ratelimitInfo = RequestQueue.rateLimitBuilder(res.headers);
-            this.retryAfter = !isNaN(ratelimitInfo.after) ? Number(ratelimitInfo.after) * 1000 : -1;
+            const headers = RequestQueue.rateLimitBuilder(res.headers);
+            this.retryAfter = !isNaN(headers.after) ? Number(headers.after) * 1000 : -1;
             // https://github.com/discordapp/discord-api-docs/issues/182
-            ratelimitInfo.reactions = request.route.includes('reactions');
+            headers.reactions = request.route.includes('reactions');
+            // Handle buckets via the hash header retroactively
+            if (headers.hash && headers.hash !== this.hash) this.manager.hashes.set(`${request.method}:${request.route}`, headers.hash);
             // Send ratelimit info
-            await this.manager.update(request.route, ratelimitInfo);
+            await this.manager.send(this.id, request.route, headers);
         }
         // Handle 2xx and 3xx responses
         if (res.ok) {

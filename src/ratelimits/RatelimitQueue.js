@@ -2,10 +2,10 @@ const { resolve } = require('path');
 const { Util } = require('discord.js');
 const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
 
-// Based on D.JS old handling, but reworked to handle ratelimits synced per process
-class DiscordRatelimit {
-    constructor(manager, endpoint) {
+class RatelimitQueue {
+    constructor(manager, id, endpoint) {
         this.manager = manager;
+        this.id = id;
         this.endpoint = endpoint;
         this.limit = -1;
         this.remaining = -1;
@@ -21,6 +21,7 @@ class DiscordRatelimit {
             limit: headers.get('x-ratelimit-limit'),
             remaining: headers.get('x-ratelimit-remaining'),
             reset: headers.get('x-ratelimit-reset'),
+            hash: headers.get('X-RateLimit-Bucket'),
             after: headers.get('retry-after'),
             global: !!headers.get('x-ratelimit-global')
         };
@@ -31,7 +32,7 @@ class DiscordRatelimit {
     }
 
     static calculateReset(reset, date) {
-        return new Date(Number(reset) * 1000).getTime() - DiscordRatelimit.getAPIOffset(date);
+        return new Date(Number(reset) * 1000).getTime() - RatelimitQueue.getAPIOffset(date);
     }
     
     get limited() {
@@ -39,7 +40,7 @@ class DiscordRatelimit {
     }
     
     get timeout() {
-        return this.reset + this.manager.wa2000.clientOptions.restTimeOffset - Date.now();
+        return this.reset + this.manager.wa2000.sweepInterval - Date.now();
     }
 
     get inactive() {
@@ -47,15 +48,15 @@ class DiscordRatelimit {
     }
 
     async update({ date, limit, remaining, reset, after, global, reactions } = {}) {
+        // Set or Update, This queue ratelimit data.
         this.limit = !isNaN(limit) ? Number(limit) : Infinity;
         this.remaining = !isNaN(remaining) ? Number(remaining) : -1;
-        this.reset = !isNaN(reset) ? DiscordRatelimit.calculateReset(reset, date) : Date.now();
+        this.reset = !isNaN(reset) ? RatelimitQueue.calculateReset(reset, date) : Date.now();
         this.after = !isNaN(after) ? Number(after) * 1000 : -1;
         // https://github.com/discordapp/discord-api-docs/issues/182
-        if (reactions) {
-            this.reset = new Date(date).getTime() - DiscordRatelimit.getAPIOffset(date) + 250;
-        }
-        // Global ratelimits, this thing will halt the whole manager if hit
+        if (reactions) 
+            this.reset = new Date(date).getTime() - RatelimitQueue.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
+        // Global ratelimit, will halt all the requests if this is true
         if (global) {
             this.manager.timeout = Util.delayFor(this.after);
             await this.manager.timeout;
@@ -76,8 +77,15 @@ class DiscordRatelimit {
     wait() {
         // Rejoice you can still do your query
         if (!this.limited) return Util.delayFor(0);
-        // Debug handled ratelimit
-        this.debug();
+        // Emit ratelimit event
+        this.manager.wa2000.emit('ratelimit', { 
+            endpoint: this.endpoint, 
+            bucket: this.id, 
+            limit: this.limit, 
+            remaining: this.remaining, 
+            after: this.after, 
+            timeout: this.timeout
+        });
         // If this exists, means we hit global timeout, on other request that isn't in this endpoint
         if (this.manager.timeout) return this.manager.timeout;
         // if not then just calculate the timeout in this route then wait it out
@@ -85,4 +93,4 @@ class DiscordRatelimit {
     }
 }
 
-module.exports = DiscordRatelimit;
+module.exports = RatelimitQueue;

@@ -1,4 +1,5 @@
 'use strict';
+const { SnowflakeUtil } = require('discord.js');
 
 const noop = () => {}; // eslint-disable-line no-empty-function
 const methods = ['get', 'post', 'delete', 'patch', 'put'];
@@ -17,28 +18,22 @@ function buildRoute(manager) {
         get(target, name) {
             if (reflectors.includes(name)) return () => route.join('/');
             if (methods.includes(name)) {
-                const routeBucket = [];
-                for (let i = 0; i < route.length; i++) {
-                    // Reactions routes and sub-routes all share the same bucket
-                    if (route[i - 1] === 'reactions') break;
-                    // Handle channel fetching wide ratelimits
-                    if (/\d{16,19}/g.test(route[i]) && (!route[i + 1] && route[i - 1] === 'channels')) routeBucket.push(':id');
-                    // Literal IDs should only be taken account if they are the Major ID (the Channel/Guild ID)
-                    else if (/\d{16,19}/g.test(route[i]) && !/channels|guilds/.test(route[i - 1])) routeBucket.push(':id');
-                    // All other parts of the route should be considered as part of the bucket identifier
-                    else routeBucket.push(route[i]);
+                const endpoint = route.join('/');
+                const major = /^\/(?:channels|guilds|webhooks)\/(\d{16,19})/.exec(endpoint)?.[1] ?? 'global';
+                const bucket = endpoint.replace(/\d{16,19}/g, ':id').replace(/\/reactions\/(.*)/, '/reactions/:reaction');
+                // Hard-Code Old Message Deletion Exception (2 week+ old messages are a different bucket)
+                // https://github.com/discord/discord-api-docs/issues/1295
+                let exceptions = '';
+                if (name === 'delete' && bucket === '/channels/:id/messages/:id') {
+                    const id = /\d{16,19}$/.exec(endpoint)[0];
+                    const { timestamp } = SnowflakeUtil.deconstruct(id);
+                    if (Date.now() - Number(timestamp) > 1000 * 60 * 60 * 24 * 14) exceptions += '/Delete Old Message';
                 }
                 return options =>
                     manager.request(
                         name,
-                        route.join('/'),
-                        Object.assign(
-                            {
-                                versioned: manager.versioned,
-                                route: routeBucket.join('/'),
-                            },
-                            options,
-                        ),
+                        endpoint,
+                        Object.assign({ versioned: manager.versioned, route: bucket + exceptions, major }, options)
                     );
             }
             route.push(name);

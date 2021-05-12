@@ -10,12 +10,12 @@ module.exports = {
             stack: error?.stack
         };
     },
-    Wa2000Request: (endpoint, headers = null) => {
+    Wa2000Request: (id, endpoint, headers = null) => {
         if (!endpoint) throw new Error('Ugh, pass an endpoint, I can\'t make a ratelimit bucket without it, stupid...');
         return {
             op: OP,
+            id,
             endpoint,
-            update: !!headers,
             headers
         };
     },
