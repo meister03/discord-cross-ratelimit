@@ -18,19 +18,6 @@ class Wa2000 extends EventEmitter {
         if (isMaster) {
             this.ratelimits = new RatelimitManager(this);
             this.ratelimits.listen();
-            this.on('ratelimit', info => 
-                this.emit('debug',
-                    '[ Walther WA2k ] Ratelimit Hit; Info =>\n' + 
-                    `  Base               : ${this.ratelimits.base}\n` + 
-                    `  Endpoint           : ${info.endpoint}\n` +
-                    `  Bucket             : ${info.bucket}\n` +
-                    `  Limit              : ${info.limit}\n` +
-                    `  Remaining          : ${info.remaining}\n`+
-                    `  Retry After        : ${info.after}ms\n` + 
-                    `  Calculated Timeout : ${info.timeout}ms\n` + 
-                    `  Global Ratelimit   : ${!!this.ratelimits.timeout}`
-                )
-            );
             return this.manager.spawn();
         }
         const Cluster = require(this.manager.path);

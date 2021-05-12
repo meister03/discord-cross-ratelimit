@@ -78,13 +78,15 @@ class RatelimitQueue {
         // Rejoice you can still do your query
         if (!this.limited) return Util.delayFor(0);
         // Emit ratelimit event
-        this.manager.wa2000.emit('ratelimit', { 
+        this.manager.wa2000.emit('ratelimit', {
+            base: this.manager.base,
             endpoint: this.endpoint, 
             bucket: this.id, 
             limit: this.limit, 
             remaining: this.remaining, 
             after: this.after, 
-            timeout: this.timeout
+            timeout: this.timeout,
+            global: !!this.manager.timeout
         });
         // If this exists, means we hit global timeout, on other request that isn't in this endpoint
         if (this.manager.timeout) return this.manager.timeout;
