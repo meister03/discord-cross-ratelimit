@@ -1,8 +1,8 @@
 const { Constants, Collection } = require('discord.js');
 const { resolve } = require('path');
-const { TLRU } = require('tlru');
 
-const { Wa2000Request, Wa2000BeingTsunOnly }= require('../../Constants.js');
+
+const { Wa2000Request, Wa2000FetchHash, Wa2000BeingTsunOnly }= require('../../Constants.js');
 const RequestHandler = require('./RequestHandler.js');
 const Router = require('./Router.js');
 
@@ -13,8 +13,6 @@ class RequestManager {
         this.client = client;
         this.tokenPrefix = client.options._tokenType;
         this.versioned = true;
-        // eslint-disable-next-line
-        this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: (client.options.restSweepInterval * 2000), maxStoreSize: Infinity });
         this.handlers = new Collection();
         if (client.options.restSweepInterval > 0) {
             const interval = client.setInterval(() => 
@@ -50,20 +48,27 @@ class RequestManager {
         throw new Error('TOKEN_MISSING');
     }
 
-    async send(id, endpoint, headers = null) {
-        const response = await this.server.send(Wa2000Request(id, endpoint, headers), { receptive: true });
+    // Fetch Hashes
+    fetch(id) {
+        return this.server.send(Wa2000FetchHash(id), { receptive: true });
+    }
+
+    // Handle Ratelimit
+    async send(id, hash, method, route, data = null) {
+        const response = await this.server.send(Wa2000Request(id, hash, method, route, data), { receptive: true });
         if (!response.errored) return;
         throw Wa2000BeingTsunOnly(response);
     }
 
-    request(method, url, options = {}) {
-        const hash = this.hashes.get(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
+    // Make API request
+    async request(method, route, options = {}) {
+        const hash = await this.fetch(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
         let handler = this.handlers.get(`${hash}:${options.major}`);
         if (!handler) {
             handler = new RequestHandler(this, hash, options);
             this.handlers.set(handler.id, handler);
         }
-        return handler.push(new APIRequest(this, method, url, options));
+        return handler.push(new APIRequest(this, method, route, options));
     }
 }
 

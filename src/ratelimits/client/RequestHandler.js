@@ -1,6 +1,6 @@
 const { resolve } = require('path');
 const { Util } = require('discord.js');
-const RequestQueue = require('../RatelimitQueue.js');
+const { constructData } = require('../RatelimitQueue.js');
 
 const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
 const HTTPError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/HTTPError.js')));
@@ -37,7 +37,7 @@ class KashimaRequestHandler {
 
     async execute(request) {
         // Let master process "pause" this request until master process says its safe to resume due to ratelimits
-        await this.manager.send(this.id, request.route);    
+        await this.manager.send(this.id, this.hash, request.method, request.route);    
         // Perform the request
         let res;
         try {
@@ -51,15 +51,12 @@ class KashimaRequestHandler {
             return this.execute(request);
         }
         if (res.headers) {
-            // Build ratelimit info for master process
-            const headers = RequestQueue.rateLimitBuilder(res.headers);
-            this.retryAfter = !isNaN(headers.after) ? Number(headers.after) * 1000 : -1;
-            // https://github.com/discordapp/discord-api-docs/issues/182
-            headers.reactions = request.route.includes('reactions');
-            // Handle buckets via the hash header retroactively
-            if (headers.hash && headers.hash !== this.hash) this.manager.hashes.set(`${request.method}:${request.route}`, headers.hash);
-            // Send ratelimit info
-            await this.manager.send(this.id, request.route, headers);
+            // Build ratelimit data for master process
+            const data = constructData(request, res.headers);
+            // Just incase I messed my ratelimit handling up, so you can avoid getting banned
+            this.retryAfter = !isNaN(data.after) ? Number(data.after) * 1000 : -1;
+            // Send ratelimit data, and wait for possible global ratelimit manager halt
+            await this.manager.send(this.id, this.hash, request.method, request.route, data);
         }
         // Handle 2xx and 3xx responses
         if (res.ok) {
@@ -91,7 +88,6 @@ class KashimaRequestHandler {
             if (request.retries === this.manager.client.options.retryLimit) {
                 throw new HTTPError(res.statusText, res.constructor.name, res.status, request.method, request.path);
             }
-    
             request.retries++;
             return this.execute(request);
         }

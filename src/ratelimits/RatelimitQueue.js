@@ -3,10 +3,11 @@ const { Util } = require('discord.js');
 const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
 
 class RatelimitQueue {
-    constructor(manager, id, endpoint) {
+    constructor(manager, id, hash, route) {
         this.manager = manager;
         this.id = id;
-        this.endpoint = endpoint;
+        this.hash = hash;
+        this.route = route;
         this.limit = -1;
         this.remaining = -1;
         this.reset = -1;
@@ -14,8 +15,8 @@ class RatelimitQueue {
         this.queue = new AsyncQueue();
     }
 
-    static rateLimitBuilder(headers) {
-        if (!headers) throw new Error('Headers can\'t be null');
+    static constructData(request, headers) {
+        if (!request || !headers) throw new Error('Request and Headers can\'t be null');
         return {
             date: headers.get('date'),
             limit: headers.get('x-ratelimit-limit'),
@@ -23,7 +24,8 @@ class RatelimitQueue {
             reset: headers.get('x-ratelimit-reset'),
             hash: headers.get('X-RateLimit-Bucket'),
             after: headers.get('retry-after'),
-            global: !!headers.get('x-ratelimit-global')
+            global: !!headers.get('x-ratelimit-global'),
+            reactions: request.route.includes('reactions')
         };
     }
 
@@ -47,15 +49,16 @@ class RatelimitQueue {
         return this.queue.remaining === 0 && !this.limited;
     }
 
-    async update({ date, limit, remaining, reset, after, global, reactions } = {}) {
-        // Set or Update, This queue ratelimit data.
+    async update(method, route, { date, limit, remaining, reset, hash, after, global, reactions } = {}) {
+        // Set or Update this queue ratelimit data
         this.limit = !isNaN(limit) ? Number(limit) : Infinity;
         this.remaining = !isNaN(remaining) ? Number(remaining) : -1;
         this.reset = !isNaN(reset) ? RatelimitQueue.calculateReset(reset, date) : Date.now();
         this.after = !isNaN(after) ? Number(after) * 1000 : -1;
+        // Handle buckets via the hash header retroactively
+        if (hash && hash !== this.hash) this.manager.hashes.set(`${method}:${route}`, hash);
         // https://github.com/discordapp/discord-api-docs/issues/182
-        if (reactions) 
-            this.reset = new Date(date).getTime() - RatelimitQueue.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
+        if (reactions) this.reset = new Date(date).getTime() - RatelimitQueue.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
             this.manager.timeout = Util.delayFor(this.after);
@@ -80,7 +83,7 @@ class RatelimitQueue {
         // Emit ratelimit event
         this.manager.wa2000.emit('ratelimit', {
             base: this.manager.base,
-            endpoint: this.endpoint, 
+            route: this.route, 
             bucket: this.id, 
             limit: this.limit, 
             remaining: this.remaining, 
