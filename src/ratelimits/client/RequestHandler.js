@@ -67,8 +67,14 @@ class KashimaRequestHandler {
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
             if (res.status === 429) {
-            // A ratelimit was hit - You did big meme on your master process ratelimits Saya
-                this.manager.client.emit('debug', `429 hit on route ${request.route}, retrying after ${this.retryAfter}ms + 500ms`);
+                // A ratelimit was hit, You did something stupid @saya
+                this.manager.client.emit('debug', 
+                    'Encountered unexpected 429 ratelimit\n' + 
+                    `  Hash:Major     : ${this.id}\n` + 
+                    `  Request Route  : ${request.route}\n` + 
+                    `  Retry After    : ${this.retryAfter}ms` 
+                );
+                // Retry after, but add 500ms on the top of original retry after
                 await Util.delayFor(this.retryAfter + 500);
                 return this.execute(request);
             }

@@ -1,5 +1,6 @@
 
 const { Collection, Constants } = require('discord.js');
+const { api, version } = Constants.DefaultOptions.http;
 const { TLRU } = require('tlru');
 
 const { OP, Wa2000BeingTsundere } = require('../Constants.js');
@@ -8,17 +9,17 @@ const RatelimitQueue = require('./RatelimitQueue.js');
 class RatelimitManager {
     constructor(wa2000) {
         this.wa2000 = wa2000;
-        this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: this.wa2000.sweepInterval * 2000, maxStoreSize: Infinity });
+        this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: this.wa2000.options.hashInactiveTimeout, maxStoreSize: Infinity });
         this.handlers = new Collection();
         this.timeout = null;
-        if (this.wa2000.sweepInterval > 0) {
-            this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.sweepInterval * 1000);
+        if (this.wa2000.options.handlerSweepInterval > 0) {
+            this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.options.handlerSweepInterval * 1000);
             this.sweeper.unref();
         }   
     }
 
     get base() {
-        return `${Constants.DefaultOptions.http.api}/v${Constants.DefaultOptions.http.version}`;
+        return `${api}/v${version}`;
     }
 
     get server() {

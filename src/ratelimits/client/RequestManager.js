@@ -9,16 +9,14 @@ const Router = require('./Router.js');
 const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
 
 class RequestManager {
-    constructor(client) {
+    constructor(client, interval) {
         this.client = client;
         this.tokenPrefix = client.options._tokenType;
         this.versioned = true;
         this.handlers = new Collection();
-        if (client.options.restSweepInterval > 0) {
-            const interval = client.setInterval(() => 
-                this.handlers.sweep(handler => handler.inactive)
-            , client.options.restSweepInterval * 1000);
-            interval.unref();
+        if (interval > 0) {
+            this.sweeper = client.setInterval(() => this.handlers.sweep(handler => handler.inactive), interval);
+            this.sweeper.unref();
         }
     }
 

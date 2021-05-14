@@ -42,7 +42,7 @@ class RatelimitQueue {
     }
     
     get timeout() {
-        return this.reset + this.manager.wa2000.sweepInterval - Date.now();
+        return this.reset + this.manager.wa2000.options.requestOffset - Date.now();
     }
 
     get inactive() {
@@ -56,11 +56,20 @@ class RatelimitQueue {
         this.reset = !isNaN(reset) ? RatelimitQueue.calculateReset(reset, date) : Date.now();
         this.after = !isNaN(after) ? Number(after) * 1000 : -1;
         // Handle buckets via the hash header retroactively
-        if (hash && hash !== this.hash) this.manager.hashes.set(`${method}:${route}`, hash);
+        if (hash && hash !== this.hash) {
+            this.manager.wa2000.emit('debug', 
+                'Received a bucket hash update\n' + 
+                `  Route        : ${route}\n` + 
+                `  Old Hash     : ${this.hash}\n` + 
+                `  New Hash     : ${hash}`
+            );
+            this.manager.hashes.set(`${method}:${route}`, hash);
+        }
         // https://github.com/discordapp/discord-api-docs/issues/182
         if (reactions) this.reset = new Date(date).getTime() - RatelimitQueue.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
+            this.manager.wa2000.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
             this.manager.timeout = Util.delayFor(this.after);
             await this.manager.timeout;
             this.manager.timeout = null;

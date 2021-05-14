@@ -2,6 +2,11 @@ const OP = 'Walther-WA2000';
 
 module.exports = {
     OP,
+    DefaultOptions: {
+        handlerSweepInterval: 120000,
+        hashInactiveTimeout: 240000,
+        requestOffset: 500
+    },
     Wa2000BeingTsundere: (error = null) => {
         return {
             errored: !!error,
