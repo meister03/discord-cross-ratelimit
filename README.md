@@ -1,5 +1,5 @@
 # Walther WA2000
-Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS v12
+Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for your Discord.JS v12 Bot
 
 > (c) Girl's Frontline for [Wa2000-chan](https://iopwiki.com/wiki/WA2000)
 
@@ -7,14 +7,15 @@ Your tsundere gun-girl that aims to integrate global ratelimits handling for Dis
   <img src="https://iopwiki.com/images/c/ce/WA2000_costume3.png">
 </p>
 
-### Before using this, please ensure you have my custom fork of [Kurasuta](https://github.com/Deivu/Kurasuta)
-> Failure to use my fork of Kurasuta will make this module not work as intended
-
 ## Features
 
 ✅ Easy to use
 
 ✅ Tsundere Gun-Girl Waifu
+
+✅ Drop in solution
+
+✅ Works both in v12 stable and master branch
 
 ## Installation
 > npm i Deivu/Walther-WA2000 --save
@@ -24,16 +25,20 @@ Your tsundere gun-girl that aims to integrate global ratelimits handling for Dis
 
 ### Example of index.js
 ```js
-const { ShardingManager } = require('kurasuta');
 const { join } = require('path');
 const Walther = require('wa2000');
-// Require Kurasuta as normal
-const manager = new ShardingManager(join(__dirname, 'main'), {
-  // Kurasuta Options
-});
-// Require Walther-WA2000 
-const walther = new Walther(manager);
-// Call spawn from "Walther-WA2000" not from "Kurasuta"
+const YourBotClient = require('./YourBotClient.js')
+const KurasutaOptions = {
+    client: YourBotClient,
+    timeout: 90000,
+    token: 'idk'
+};
+const WaltherOptions = {
+    handlerSweepInterval: 150000,
+    hashInactiveTimeout: 300000,
+    requestOffset: 500
+};
+const walther = new Walther(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions,  WaltherOptions);
 walther.spawn();
 ```
 

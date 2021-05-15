@@ -6,13 +6,12 @@ const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.
 const HTTPError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/HTTPError.js')));
 const DiscordAPIError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/DiscordAPIError.js')));
 
-class KashimaRequestHandler {
+class RequestHandler {
     constructor(manager, hash, { major }) {
         this.manager = manager;        
         this.hash = hash;
         this.id = `${hash}:${major}`;
         this.queue = new AsyncQueue();
-        this.retryAfter = -1;
     }
 
     static parseResponse(res) {
@@ -50,19 +49,20 @@ class KashimaRequestHandler {
             request.retries++;
             return this.execute(request);
         }
+        let after;
         if (res.headers) {
             // Build ratelimit data for master process
             const data = constructData(request, res.headers);
             // Just incase I messed my ratelimit handling up, so you can avoid getting banned
-            this.retryAfter = !isNaN(data.after) ? Number(data.after) * 1000 : -1;
+            after = !isNaN(data.after) ? Number(data.after) * 1000 : -1;
             // Send ratelimit data, and wait for possible global ratelimit manager halt
             await this.manager.send(this.id, this.hash, request.method, request.route, data);
         }
         // Handle 2xx and 3xx responses
-        if (res.ok) {
+        if (res.ok) 
             // Nothing wrong with the request, proceed with the next one
-            return KashimaRequestHandler.parseResponse(res);
-        }
+            return RequestHandler.parseResponse(res);
+        
         // Handle 4xx responses
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
@@ -72,28 +72,26 @@ class KashimaRequestHandler {
                     'Encountered unexpected 429 ratelimit\n' + 
                     `  Hash:Major     : ${this.id}\n` + 
                     `  Request Route  : ${request.route}\n` + 
-                    `  Retry After    : ${this.retryAfter}ms` 
+                    `  Retry After    : ${after}ms` 
                 );
                 // Retry after, but add 500ms on the top of original retry after
-                await Util.delayFor(this.retryAfter + 500);
+                await Util.delayFor(after + 500);
                 return this.execute(request);
             }
             // Handle possible malformed requests
             let data;
             try {
-                data = await KashimaRequestHandler.parseResponse(res);
+                data = await RequestHandler.parseResponse(res);
             } catch (err) {
                 throw new HTTPError(err.message, err.constructor.name, err.status, request.method, request.path);
             }
-    
             throw new DiscordAPIError(request.path, data, request.method, res.status);
         }
         // Handle 5xx responses
         if (res.status >= 500 && res.status < 600) {
             // Retry the specified number of times for possible serverside issues
-            if (request.retries === this.manager.client.options.retryLimit) {
+            if (request.retries === this.manager.client.options.retryLimit)
                 throw new HTTPError(res.statusText, res.constructor.name, res.status, request.method, request.path);
-            }
             request.retries++;
             return this.execute(request);
         }
@@ -102,4 +100,4 @@ class KashimaRequestHandler {
     }
 }
 
-module.exports = KashimaRequestHandler;
+module.exports = RequestHandler;

@@ -12,10 +12,27 @@ class RatelimitManager {
         this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: this.wa2000.options.hashInactiveTimeout, maxStoreSize: Infinity });
         this.handlers = new Collection();
         this.timeout = null;
+        // inactive handler sweeper
         if (this.wa2000.options.handlerSweepInterval > 0) {
             this.sweeper = setInterval(() => this.handlers.sweep(endpoint => endpoint.inactive), this.wa2000.options.handlerSweepInterval * 1000);
             this.sweeper.unref();
-        }   
+        }
+        // ipc message event handler
+        this.server.on('message', message => {
+            if (!message) return;
+            const data = message.data;
+            // This OP should be "ALWAYS RECEPTIVE"
+            if (!data || OP !== data.op) return;
+            // Handle Bucket Ratelimits
+            if (message.data.type === 'bucket') {
+                this.execute(message.data)
+                    .then(() => message.reply(Wa2000BeingTsundere()))
+                    .catch(error => message.reply(Wa2000BeingTsundere(error)));
+                return;
+            }
+            // Handle Fetch Hashes Requests
+            message.reply(this.hashes.get(message.data.id));
+        });
     }
 
     get base() {

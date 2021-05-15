@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
-    "kurasuta": "github:Deivu/Kurasuta",
+    "kurasuta": "github:DevYukine/Kurasuta",
     "tlru": "^1.0.2"
   }
 }
