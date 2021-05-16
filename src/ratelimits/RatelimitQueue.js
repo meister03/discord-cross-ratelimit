@@ -2,16 +2,59 @@ const { resolve } = require('path');
 const { Util } = require('discord.js');
 const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
 
+/**
+  * RatelimitQueue, a sequential request queue for each ratelimit hash
+  * @class RatelimitQueue
+  */
 class RatelimitQueue {
+    /**
+     * @param {RatelimitManager} manager The manager for this ratelimit queue
+     * @param {string} id The ID of this ratelimit queue
+     * @param {string} hash The ratelimit hash for this ratelimit queue
+     * @param {string} route The route for this ratelimit queue
+     */
     constructor(manager, id, hash, route) {
+        /**
+         * The manager for this ratelimit queue
+         * @type {RatelimitManager}
+         */
         this.manager = manager;
+        /**
+         * The ID of this ratelimit queue
+         * @type {string}
+         */
         this.id = id;
+        /**
+         * The ratelimit hash for this ratelimit queue
+         * @type {string}
+         */
         this.hash = hash;
+        /**
+         * The route for this ratelimit queue
+         * @type {string}
+         */
         this.route = route;
+        /**
+         * The max number of request you can do in this ratelimit queue cycle
+         * @type {number}
+         */
         this.limit = -1;
+        /**
+         * The remaining requests you can do in this ratelimit queue cycle
+         * @type {number}
+         */
         this.remaining = -1;
+        /**
+         * When this ratelimit queue remaining requests will reset
+         * @type {number}
+         */
         this.reset = -1;
+        /**
+         * Retry-After header for this requests, 0 if nothing out of ordinary happened
+         * @type {number}
+         */
         this.after = -1;
+
         this.queue = new AsyncQueue();
     }
 
