@@ -6,11 +6,33 @@ const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.
 const HTTPError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/HTTPError.js')));
 const DiscordAPIError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/DiscordAPIError.js')));
 
+/**
+  * ReqeustHandler, the handler for the non-master process that executes the rest requests
+  * @class RequestHandler
+  */
 class RequestHandler {
+    /**
+     * @param {RequestManager} manager The manager for this request handler
+     * @param {string} hash The hash for this request handler
+     * @param {Object} options The options for the API request from the router
+     */
     constructor(manager, hash, { major }) {
-        this.manager = manager;        
+        /**
+         * The manager of this request handler
+         * @type {RequestManager}
+         */
+        this.manager = manager;
+        /**
+         * The ratelimit hash of this request handler
+         * @type {string}
+         */
         this.hash = hash;
+        /**
+         * The ID of this request handler
+         * @type {string}
+         */
         this.id = `${hash}:${major}`;
+
         this.queue = new AsyncQueue();
     }
 

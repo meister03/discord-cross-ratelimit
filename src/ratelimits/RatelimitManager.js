@@ -12,11 +12,11 @@ const RatelimitQueue = require('./RatelimitQueue.js');
   */
 class RatelimitManager {
     /**
-     * @param {Wa2000} wa2000 The main class of this package
+     * @param {Wa2000} wa2000 The class that initalized the sharding manager, and ratelimit manager class
      */
     constructor(wa2000) {
         /**
-         * Wa2000, the main class of this package
+         * Contains the sharding manager, and ratelimit manager class
          * @type {Wa2000}
          */
         this.wa2000 = wa2000;

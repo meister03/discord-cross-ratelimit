@@ -8,12 +8,42 @@ const Router = require('./Router.js');
 
 const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
 
+/**
+  * RequestManager, the request manager of the non-master process that communicates with the master process
+  * @class RequestManager
+  */
 class RequestManager {
+    /**
+     * @param {DiscordClient} client The client for this request manager
+     * @param {number} interval The interval ms for the handler sweeper for this request manager
+     */
     constructor(client, interval) {
+        /**
+         * The client for this request manager
+         * @type {DiscordClient}
+         */
         this.client = client;
-        this.tokenPrefix = client.options._tokenType;
+        /**
+         * The prefix to use for the token
+         * @type {string}
+         */
+        this.tokenPrefix = client.options._tokenType || 'Bot';
+        /**
+         * If this request manager is versioned
+         * @type {boolean}
+         */
         this.versioned = true;
+        /**
+         * The request handlers that this request manager handles
+         * @type {Collection<string, RequestHandler>}
+         */
         this.handlers = new Collection();
+        /**
+         * Inactive handlers sweeper
+         * @type {Timeout|null}
+         */
+        this.sweeper = null;
+
         if (interval > 0) {
             this.sweeper = client.setInterval(() => this.handlers.sweep(handler => handler.inactive), interval);
             this.sweeper.unref();

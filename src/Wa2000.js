@@ -9,6 +9,11 @@ const RatelimitManager = require('./ratelimits/RatelimitManager.js');
 const RequestManager = require('./ratelimits/client/RequestManager.js');
 
 /**
+ * Discord.JS Client
+ * @external DiscordClient
+ * @see {@link https://discord.js.org/#/docs/main/stable/class/Client}
+ */
+/**
  * Kurasuta Options
  * @external KurasutaOptions
  * @see {@link https://github.com/DevYukine/Kurasuta#shardingmanager}
@@ -25,7 +30,7 @@ const RequestManager = require('./ratelimits/client/RequestManager.js');
  */
 
 /**
-  * Wa2000, the main class of this package
+  * Wa2000, initalizes the sharding manager, and ratelimit manager class
   * @class Wa2000
   * @extends {EventEmitter}
   */
@@ -33,6 +38,7 @@ class Wa2000 extends EventEmitter {
     /**
      * @param {string} path The path of your extended Kurasuta "BaseCluster.js"
      * @param {KurasutaOptions} [managerOptions={}] Options to initialize Kurasuta with
+     * @param {Object} [ratelimitOptions={}] Options to initialize Kurasuta with
      * @param {number} [ratelimitOptions.handlerSweepInterval=150000] Interval for sweeping inactive cached ratelimit buckets, in ms
      * @param {number} [ratelimitOptions.hashInactiveTimeout=300000] TTL for unaccessed ratelimit hashes, in ms
      * @param {number} [ratelimitOptions.requestOffset=500] Offset for calculated timeouts for ratelimits, like "timeout + requestOffset"

@@ -1,0 +1,49 @@
+
+<html><head></head><body><h1 id="walther-wa2000">Walther WA2000</h1>
+<hr />
+<p>Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for your Discord.JS v12 Bot</p>
+<blockquote>
+<p>(c) Girl's Frontline for <a href="https://iopwiki.com/wiki/WA2000">Wa2000-chan</a></p>
+</blockquote>
+<p align="center">
+  <img src="https://iopwiki.com/images/c/ce/WA2000_costume3.png" style="max-width: 100%;">
+</p>
+
+<h2 id="features">Features</h2>
+<hr />
+<p>✅ Easy to use</p>
+<p>✅ Tsundere Gun-Girl Waifu</p>
+<p>✅ Drop in solution</p>
+<p>✅ Works both in v12 stable and master branch</p>
+<h2 id="installation">Installation</h2>
+<hr />
+<blockquote>
+<p>npm i Deivu/Walther-WA2000 --save</p>
+</blockquote>
+<h2 id="example">Example</h2>
+<hr />
+<blockquote>
+<p>Running Wa2000 should be similar on how you do it with Kurasuta <a href="https://github.com/Deivu/Kurasuta#example">Click Me</a>, Except Your Index.JS will need minor changes</p>
+</blockquote>
+<h3 id="example-of-indexjs">Example of index.js</h3>
+<pre><code class="js">const { join } = require('path');
+const Walther = require('wa2000');
+const YourBotClient = require('./YourBotClient.js')
+const KurasutaOptions = {
+    client: YourBotClient,
+    timeout: 90000,
+    token: 'idk'
+};
+const WaltherOptions = {
+    handlerSweepInterval: 150000,
+    hashInactiveTimeout: 300000,
+    requestOffset: 500
+};
+const walther = new Walther(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions,  WaltherOptions);
+walther.spawn();</code></pre>
+<h3 id="example-bot">Example Bot</h3>
+<p><a href="https://github.com/Deivu/Kongou">https://github.com/Deivu/Kongou</a></p>
+<blockquote>
+<p>Based from my Handling from <code>@Kashima</code>, Made with ❤ by @Sāya#0113</p>
+</blockquote>
+</body></html>
