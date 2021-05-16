@@ -27,7 +27,7 @@ class RatelimitManager {
         this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: this.wa2000.options.hashInactiveTimeout, maxStoreSize: Infinity });
         /**
          * Currently cached ratelimit handlers
-         * @type {Collection<string, Object>}
+         * @type {Collection<string, RatelimitQueue>}
          */
         this.handlers = new Collection();
         /**
