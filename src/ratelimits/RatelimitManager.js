@@ -51,24 +51,6 @@ class RatelimitManager {
         }
         return data ? limiter.update(method, route, data) : limiter.handle();
     }
-
-    listen() {
-        this.server.on('message', message => {
-            if (!message) return;
-            const data = message.data;
-            // This OP should be "ALWAYS RECEPTIVE"
-            if (!data || OP !== data.op) return;
-            // Handle Bucket Ratelimits
-            if (message.data.type === 'bucket') {
-                this.execute(message.data)
-                    .then(() => message.reply(Wa2000BeingTsundere()))
-                    .catch(error => message.reply(Wa2000BeingTsundere(error)));
-                return;
-            }
-            // Handle Fetch Hashes Requests
-            message.reply(this.hashes.get(message.data.id));
-        });
-    }
 }
 
 module.exports = RatelimitManager;
