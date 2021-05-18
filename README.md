@@ -1,5 +1,5 @@
 # Walther WA2000
-Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for your Discord.JS v12 Bot
+Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for Discord.JS v12
 
 > (c) Girl's Frontline for [Wa2000-chan](https://iopwiki.com/wiki/WA2000)
 
@@ -13,17 +13,23 @@ Your tsundere gun-girl that aims to integrate proper and globally synced ratelim
 
 ✅ Tsundere Gun-Girl Waifu
 
-✅ Drop in solution
+✅ A drop in solution for your 429 problems
 
-✅ Works both in v12 stable and master branch
+✅ Works both in Discord.JS v12 stable and master branch
 
 ## Installation
 > npm i Deivu/Walther-WA2000 --save
 
+## Documentation
+> https://deivu.github.io/Walther-WA2000/
+
+## Support
+> https://discord.gg/FVqbtGu `#development` channel
+
 ## Example
 > Running Wa2000 should be similar on how you do it with Kurasuta [Click Me](https://github.com/Deivu/Kurasuta#example), Except Your Index.JS will need minor changes
 
-### Example of index.js
+## Example of index.js
 ```js
 const { join } = require('path');
 const Walther = require('wa2000');
@@ -39,10 +45,13 @@ const WaltherOptions = {
     requestOffset: 500
 };
 const walther = new Walther(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions,  WaltherOptions);
+// If you need to access the Kurasuta Sharding Manager, example, you want to listen to shard ready event
+walther.manager.on('shardReady', id => console.log(`Shard ${id} is now ready`));
+// Call spawn from walther, not from kurasuta
 walther.spawn();
 ```
 
-### Example Bot
+## Example Bot
 https://github.com/Deivu/Kongou
 
 > Based from my Handling from `@Kashima`, Made with ❤ by @Sāya#0113
