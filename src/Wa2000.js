@@ -44,6 +44,26 @@ class Wa2000 extends EventEmitter {
      * @param {number} [ratelimitOptions.requestOffset=500] Offset for calculated timeouts for ratelimits, like "timeout + requestOffset"
      */
     constructor(path, managerOptions = {}, ratelimitOptions = {}) {
+        /**
+         * Emitted when Wa2000 handled a ratelimit, not a 429, basically she handled the ratelimit before you hit a 429
+         * @event Wa2000#ratelimit
+         * @param {Object} info The info for the ratelimit that's been handled
+         * @param {string} info.base Base URL of the ratelimit handled
+         * @param {string} info.route Route of the ratelimit handled
+         * @param {string} info.bucket Bucket ID of the ratelimit handled in format "hash:major"
+         * @param {number} info.limit Total number of request you can do per ratelimit rotation
+         * @param {number} info.remaining How many requests left you can do before Wa2000 halts any new requests on this route
+         * @param {number} info.after Retry-After in a request header, this is usually 0 unless you got 429'ed, or any other unusual events. This is in ms
+         * @param {number} info.timeout Calculated timeout, on which this ratelimit resets. This is in ms
+         * @param {boolean} info.global Indicates if all your requests are halted, regardless of anything, this is global. Wa2000 will halt any requests if this is true until the timeout expires
+         * @memberOf Wa2000
+         */
+        /**
+         * Emitted when Wa2000 sent a debug message
+         * @event Wa2000#debug
+         * @param {string} message
+         * @memberOf Wa2000
+         */
         super();
         if (!path) throw new Error('Ugh, commander, I am not dumb enough to know you didn\'t pass a path for your cluster file, Baka!');
         /**
@@ -83,25 +103,6 @@ class Wa2000 extends EventEmitter {
         await cluster.init();
         return;
     }
-    /**
-     * Emitted when Wa2000 handled a ratelimit, not a 429, basically she handled the ratelimit before you hit a 429
-     * @event Wa2000#ratelimit
-     * @param {string} info.base Base URL of the ratelimit handled
-     * @param {string} info.route Route of the ratelimit handled
-     * @param {string} info.bucket Bucket ID of the ratelimit handled in format "hash:major"
-     * @param {number} info.limit Total number of request you can do per ratelimit rotation
-     * @param {number} info.remaining How many requests left you can do before Wa2000 halts any new requests on this route
-     * @param {number} info.after Retry-After in a request header, this is usually 0 unless you got 429'ed, or any other unusual events. This is in ms
-     * @param {number} info.timeout Calculated timeout, on which this ratelimit resets. This is in ms
-     * @param {boolean} info.global Indicates if all your requests are halted, regardless of anything, this is global. Wa2000 will halt any requests if this is true until the timeout expires
-     * @memberOf Wa2000
-     */
-    /**
-     * Emitted when Wa2000 sent a debug message
-     * @event Wa2000#debug
-     * @param {string} message
-     * @memberOf Wa2000
-     */
 }
 
 module.exports = Wa2000;

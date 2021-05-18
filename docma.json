@@ -20,7 +20,7 @@
         "title":"Walther Wa2000 | Synced Ratelimits for Discord.JS v12",
         "routing":"query",
         "entrance":"content:readme",
-        "base":"/Wa2000"
+        "base":"/Walther-WA2000"
     },
     "template":{
         "options":{
