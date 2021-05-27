@@ -1,8 +1,8 @@
+const { AsyncQueue } = require('@sapphire/async-queue');
 const { resolve } = require('path');
 const { Util } = require('discord.js');
 const { constructData } = require('../RatelimitQueue.js');
 
-const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
 const HTTPError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/HTTPError.js')));
 const DiscordAPIError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/DiscordAPIError.js')));
 

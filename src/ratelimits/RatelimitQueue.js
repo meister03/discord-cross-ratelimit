@@ -1,6 +1,5 @@
-const { resolve } = require('path');
 const { Util } = require('discord.js');
-const AsyncQueue = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/AsyncQueue.js')));
+const { AsyncQueue } = require('@sapphire/async-queue');
 
 /**
   * RatelimitQueue, a sequential request queue for each ratelimit hash
