@@ -1,6 +1,6 @@
 {
   "name": "wa2000",
-  "version": "1.0.0",
+  "version": "2.0.0-dev",
   "description": "Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS v12",
   "main": "src/Wa2000.js",
   "repository": {
