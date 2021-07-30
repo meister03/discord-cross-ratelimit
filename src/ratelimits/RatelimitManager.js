@@ -1,6 +1,6 @@
 
-const { Collection, Constants } = require('discord.js');
-const { api, version } = Constants.DefaultOptions.http;
+const { Collection, Options } = require('discord.js');
+const { api, version } = Options.createDefault().http;
 const { TLRU } = require('tlru');
 
 const { OP, Wa2000BeingTsundere } = require('../Constants.js');
