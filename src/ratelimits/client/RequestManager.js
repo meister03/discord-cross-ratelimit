@@ -45,7 +45,7 @@ class RequestManager {
         this.sweeper = null;
 
         if (interval > 0) {
-            this.sweeper = client.setInterval(() => this.handlers.sweep(handler => handler.inactive), interval);
+            this.sweeper = setInterval(() => this.handlers.sweep(handler => handler.inactive), interval);
             this.sweeper.unref();
         }
     }
