@@ -28,6 +28,5 @@
     "tlru": "^1.0.2",
     "discord.js": "github:discordjs/discord.js",
     "kurasuta": "github:DevYukine/Kurasuta"
-    
   }
 }
