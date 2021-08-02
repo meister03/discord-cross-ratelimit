@@ -26,7 +26,7 @@
   "dependencies": {
     "@sapphire/async-queue": "^1.1.2",
     "tlru": "^1.0.2",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "^12.5.3",
     "kurasuta": "github:DevYukine/Kurasuta"
     
   }
