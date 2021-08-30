@@ -1,9 +1,8 @@
 
-const { Collection, Constants } = require('discord.js');
-const { api, version } = Constants.DefaultOptions.http;
+const { Collection } = require('@discordjs/collection');
 const { TLRU } = require('tlru');
-
 const { OP, Wa2000BeingTsundere } = require('../Constants.js');
+
 const RatelimitQueue = require('./RatelimitQueue.js');
 
 /**
@@ -62,10 +61,6 @@ class RatelimitManager {
             // Handle Fetch Hashes Requests
             message.reply(this.hashes.get(message.data.id));
         });
-    }
-
-    get base() {
-        return `${api}/v${version}`;
     }
 
     get server() {
