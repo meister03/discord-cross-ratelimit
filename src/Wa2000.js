@@ -48,7 +48,6 @@ class Wa2000 extends EventEmitter {
          * Emitted when Wa2000 handled a ratelimit, not a 429, basically she handled the ratelimit before you hit a 429
          * @event Wa2000#ratelimit
          * @param {Object} info The info for the ratelimit that's been handled
-         * @param {string} info.base Base URL of the ratelimit handled
          * @param {string} info.route Route of the ratelimit handled
          * @param {string} info.bucket Bucket ID of the ratelimit handled in format "hash:major"
          * @param {number} info.limit Total number of request you can do per ratelimit rotation

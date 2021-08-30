@@ -133,7 +133,6 @@ class RatelimitQueue {
         if (!this.limited) return Util.delayFor(0);
         // Emit ratelimit event
         this.manager.wa2000.emit('ratelimit', {
-            base: this.manager.base,
             route: this.route, 
             bucket: this.id, 
             limit: this.limit, 

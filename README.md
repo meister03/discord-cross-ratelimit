@@ -1,5 +1,5 @@
 # Walther WA2000
-Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for Discord.JS v12
+Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for Discord.JS
 
 > (c) Girl's Frontline for [Wa2000-chan](https://iopwiki.com/wiki/WA2000)
 
@@ -15,7 +15,7 @@ Your tsundere gun-girl that aims to integrate proper and globally synced ratelim
 
 ✅ A drop in solution for your 429 problems
 
-✅ Works both in Discord.JS v12 stable and master branch
+✅ Supports Discord.JS v13
 
 ## Installation
 > npm i Deivu/Walther-WA2000 --save

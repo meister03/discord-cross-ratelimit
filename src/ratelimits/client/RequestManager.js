@@ -1,4 +1,6 @@
-const { Constants, Collection } = require('discord.js');
+
+const { Collection } = require('@discordjs/collection');
+const { Constants } = require('discord.js');
 const { resolve } = require('path');
 
 
@@ -23,11 +25,6 @@ class RequestManager {
          * @type {DiscordClient}
          */
         this.client = client;
-        /**
-         * The prefix to use for the token
-         * @type {string}
-         */
-        this.tokenPrefix = client.options._tokenType || 'Bot';
         /**
          * If this request manager is versioned
          * @type {boolean}
@@ -72,7 +69,7 @@ class RequestManager {
 
     getAuth() {
         const token = this.client.token || this.client.accessToken;
-        if (token) return `${this.tokenPrefix} ${token}`;
+        if (token) return `Bot ${token}`;
         throw new Error('TOKEN_MISSING');
     }
 
