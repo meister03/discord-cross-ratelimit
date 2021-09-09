@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const { ShardingManager } = require('kurasuta');
-const { isMaster } = require('cluster');
+const { isPrimary } = require('cluster');
 const { Util } = require('discord.js');
 const { DefaultOptions } = require('./Constants.js');
 
@@ -88,11 +88,11 @@ class Wa2000 extends EventEmitter {
      * @returns {Promise<void>}
      */
     async spawn() {
-        if (isMaster) {
-            while(this.manager.ipc.server.status !== 1) await Util.delayFor(50);
+        if (isPrimary) {
+            while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
             await this.manager.ipc.server.close();
             this.manager.ipc = new Wa2000MasterIPC(this.manager);
-            while(this.manager.ipc.server.status !== 1) await Util.delayFor(50);
+            while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
             this.ratelimits = new RatelimitManager(this);
             await this.manager.spawn();
             return;
