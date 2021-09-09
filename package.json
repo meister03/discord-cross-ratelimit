@@ -1,7 +1,7 @@
 {
   "name": "wa2000",
-  "version": "1.1.0",
-  "description": "Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS",
+  "version": "2.1.0",
+  "description": "Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS, Supports v13",
   "main": "src/Wa2000.js",
   "repository": {
     "type": "git",
@@ -25,8 +25,9 @@
   ],
   "dependencies": {
     "@sapphire/async-queue": "^1.1.2",
+    "@discordjs/collection": "^0.2.1",
     "tlru": "^1.0.2",
-    "discord.js": "^13.1.0",
-    "kurasuta": "^3.0.1" 
+    "discord.js": ">=13.0.0",
+    "kurasuta": "^3.0.1"
   }
 }
