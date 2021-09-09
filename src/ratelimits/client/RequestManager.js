@@ -1,4 +1,3 @@
-
 const { Collection } = require('@discordjs/collection');
 const { Constants } = require('discord.js');
 const { resolve } = require('path');

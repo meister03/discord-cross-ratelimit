@@ -1,4 +1,3 @@
-
 const { Collection } = require('@discordjs/collection');
 const { TLRU } = require('tlru');
 const { OP, Wa2000BeingTsundere } = require('../Constants.js');
