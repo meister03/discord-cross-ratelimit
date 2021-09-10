@@ -1,5 +1,5 @@
 const { Collection } = require('@discordjs/collection');
-const { TLRU } = require('tlru');
+const { Cheshire } = require('cheshire');
 const { OP, Wa2000BeingTsundere } = require('../Constants.js');
 
 const RatelimitQueue = require('./RatelimitQueue.js');
@@ -22,7 +22,7 @@ class RatelimitManager {
          * Currently cached ratelimit hashes
          * @type {TLRU<string, string>}
          */
-        this.hashes = new TLRU({ defaultLRU: true, maxAgeMs: this.wa2000.options.hashInactiveTimeout, maxStoreSize: Infinity });
+        this.hashes = new Cheshire({ lru: true, lifetime: this.wa2000.options.hashInactiveTimeout });
         /**
          * Currently cached ratelimit handlers
          * @type {Collection<string, RatelimitQueue>}
