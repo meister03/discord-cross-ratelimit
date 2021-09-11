@@ -2,7 +2,8 @@
   "name": "azuma",
   "version": "1.0.0",
   "description": "A package that actually syncs your ratelimits across all your clusters on Discord.JS",
-  "main": "src/azuma.js",
+  "main": "index.js",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Deivu/Azuma.git"

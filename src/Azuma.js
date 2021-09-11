@@ -27,6 +27,16 @@ const RequestManager = require('./client/RequestManager.js');
  * @external Timeout
  * @see {@link https://nodejs.org/api/timers.html#timers_class_timeout}
  */
+/**
+ * Request object in EmittedInfo
+ * @external Request
+ * @see {@link https://github.com/Deivu/Azuma/blob/8ed42d73c4604c09aba0df117982123b0592c796/typings/client/RequestManager.d.ts#L11}
+ */
+/**
+ * Response object in EmittedInfo
+ * @external Response
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Response}
+ */
 
 /**
   * Initalizes the sharding manager, and ratelimit manager class
@@ -39,7 +49,7 @@ class Azuma extends EventEmitter {
      * @param {KurasutaOptions} [managerOptions={}] Options to initialize Kurasuta with
      * @param {Object} [ratelimitOptions={}] Options to initialize Azuma with
      * @param {number} [ratelimitOptions.handlerSweepInterval=120000] Interval for sweeping inactive cached ratelimit buckets, in ms
-     * @param {number} [ratelimitOptions.inactiveTimeout=240000] TTL for unaccessed ratelimit cached hashes and handlers in master process, in ms
+     * @param {number} [ratelimitOptions.inactiveTimeout=240000] TTL for unaccessed ratelimit cached hashes and ratelimit info in master process, in ms
      * @param {number} [ratelimitOptions.requestOffset=500] Extra time in ms to wait before continuing to make REST requests
      */
     constructor(path, managerOptions = {}, ratelimitOptions = {}) {

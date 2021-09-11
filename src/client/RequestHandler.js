@@ -38,16 +38,29 @@ class RequestHandler {
          */
         this.queue = new AsyncQueue();
     }
-
+    /**
+     * Parses an api response
+     * @static
+     * @param {Response} res
+     * @returns {Promise<Buffer|Object>}
+     */
     static parseResponse(res) {
         if (res.headers.get('content-type').startsWith('application/json')) return res.json();
         return res.buffer();
     }
-
+    /**
+     * If this handler is inactive
+     * @type {boolean}
+     * @readonly
+     */
     get inactive() {
         return this.queue.remaining === 0;
     }
-    
+    /**
+     * Queues a request in this handler
+     * @param {Request} request
+     * @returns {Promise<Buffer|Object|null>}
+     */
     async push(request) {
         await this.queue.wait();
         let res;
@@ -58,7 +71,12 @@ class RequestHandler {
         }
         return res;
     }
-
+    /**
+     * Executes a request in this handler
+     * @param {Request} request
+     * @private
+     * @returns {Promise<Buffer|Object|null>}
+     */
     async execute(request) {
         // Get ratelimit data
         const { limited, limit, global, timeout } = await this.manager.fetchInfo(this.id, this.hash, request.route);

@@ -4,7 +4,7 @@ const AzumaRatelimit = require('./AzumaRatelimit.js');
 
 /**
   * Governs all the ratelimits across all your clusters / process
-  * @class RatelimitManager
+  * @class AzumaManager
   */
 class AzumaManager {
     /**
@@ -22,8 +22,8 @@ class AzumaManager {
          */
         this.hashes = new Cheshire({ lru: true, lifetime: this.azuma.options.inactiveTimeout });
         /**
-         * Currently cached ratelimit handlers
-         * @type {Cheshire<string, RatelimitQueue>}
+         * Currently cached ratelimit info
+         * @type {Cheshire<string, AzumaRatelimit>}
          */
         this.handlers = new Cheshire({ lru: true, lifetime: this.azuma.options.inactiveTimeout });
         /**
@@ -31,9 +31,6 @@ class AzumaManager {
          * @type {number}
          */
         this.timeout = 0;
-        /**
-         * IPC message handler
-         */
         this.server.on('message', message => {
             if (!message) return;
             const data = message.data;
@@ -51,15 +48,27 @@ class AzumaManager {
             }
         });
     }
-
+    /**
+     * The server for the IPC
+     * @type {*}
+     * @readonly
+     */
     get server() {
         return this.azuma.manager.ipc.server;
     }
-
+    /**
+     * Global timeout if there's any. Will only be accurate if this.timeout is not zero
+     * @type {number}
+     * @readonly
+     */
     get globalTimeout() {
         return Date.now() - this.timeout;
     }
-
+    /**
+     * Gets a specific handler from cache
+     * @param {Object} data
+     * @returns {*}
+     */
     get({ id, hash, route }) {
         let limiter = this.handlers.get(id);
         if (!limiter) {
@@ -68,7 +77,11 @@ class AzumaManager {
         }
         return createHandler(this, limiter);
     }
-
+    /**
+     * Updates a specific handler from cache
+     * @param {Object} data
+     * @returns {void}
+     */
     update({ id, hash, method, route, data }) {
         let limiter = this.handlers.get(id);
         if (!limiter) {

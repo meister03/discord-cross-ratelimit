@@ -8,6 +8,13 @@ const Router = require('./Router.js');
 const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
 
 /**
+ * The parameter emitted in onRequest, onResponse, onTooManyRequest events
+ * @typedef {Object} EmittedInfo
+ * @property {Request} request Info about the request made
+ * @property {Response} [response] Response for the request made, will be null in onRequest event
+ */
+
+/**
   * The request manager of the non-master process that communicates with the master process
   * @class RequestManager
   */
@@ -20,21 +27,21 @@ class RequestManager extends EventEmitter {
         super();
         /**
          * Emitted when a request was made
-         * @event Azuma#onRequest
-         * @param {Object} data
-         * @memberOf Azuma
+         * @event RequestManager#onRequest
+         * @param {EmittedInfo} data
+         * @memberOf RequestManager
          */
         /**
          * Emitted when a request was fulfilled 
-         * @event Azuma#onResponse
-         * @param {Object} data
-         * @memberOf Azuma
+         * @event RequestManager#onResponse
+         * @param {EmittedInfo} data
+         * @memberOf RequestManager
          */
         /**
          * Emitted when an actual 429 was hit
-         * @event Azuma#onTooManyRequest
-         * @param {Object} data
-         * @memberOf Azuma
+         * @event RequestManager#onTooManyRequest
+         * @param {EmittedInfo} data
+         * @memberOf RequestManager
          */
         /**
          * The client for this request manager
@@ -62,45 +69,80 @@ class RequestManager extends EventEmitter {
             this.sweeper.unref();
         }
     }
-
+    /**
+     * The client for the IPC
+     * @type {*}
+     * @readonly
+     */
     get server() {
         return this.client.shard.ipc.server;
     }
-
+    /**
+     * A proxy api router 
+     * @type {*}
+     * @readonly
+     */
     get api() {
         return Router(this);
     }
-
+    /**
+     * CDN endpoints
+     * @type {Object}
+     * @readonly
+     */
     get cdn() {
         return Constants.Endpoints.CDN(this.client.options.http.cdn);
     }
-
+    /**
+     * Sets the endpoint for http api
+     * @type {string}
+     */
     get endpoint() {
         return this.client.options.http.api;
     }
-    
     set endpoint(endpoint) {
         this.client.options.http.api = endpoint;
     }
-
+    /**
+     * Gets the auth for this manager
+     * @returns {string}
+     */
     getAuth() {
         const token = this.client.token || this.client.accessToken;
         if (token) return `Bot ${token}`;
         throw new Error('TOKEN_MISSING');
     }
-
+    /**
+     * Gets a cached hash in central cache
+     * @param {string} id
+     * @returns {Promise<string>}
+     */
     fetchHash(id) {
         return this.server.send(createFetchHashMessage(id), { receptive: true });
     }
-
+    /**
+     * Gets a cached ratelimit info in central cache
+     * @param {Object} data
+     * @returns {Promise<*>}
+     */
     fetchInfo(...args) {
         return this.server.send(createFetchHandlerMessage(...args), { receptive: true });
     }
-
+    /**
+     * Updates a cached ratelimit info in central cache
+     * @param {Object} data
+     * @returns {Promise<void>}
+     */
     updateInfo(...args) {
         return this.server.send(createUpdateHandlerMessage(...args), { receptive: true });
     }
-
+    /**
+     * Gets a specific handler from cache
+     * @param {string} method
+     * @param {route} route
+     * @param {Object} data
+     * @returns {Promise<Buffer|Object|null>}
+     */
     async request(method, route, options = {}) {
         const hash = await this.fetchHash(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
         let handler = this.handlers.get(`${hash}:${options.major}`);

@@ -19,6 +19,10 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 > npm i --save azuma
 
+## Documentation
+
+> https://deivu.github.io/Azuma/?api
+
 ## TODO
 
 * Support for `options.invalidRequestWarningInterval`

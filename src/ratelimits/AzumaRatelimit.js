@@ -1,9 +1,9 @@
 const { Util } = require('discord.js');
 
 /**
-  * Represents a ratelimit cache data for an endpoint
-  * @class AzumaRatelimit
-  */
+ * Represents a ratelimit cache data for an endpoint
+ * @class AzumaRatelimit
+ */
 class AzumaRatelimit {
     /**
      * @param {AzumaManager} manager The manager for this ratelimit queue
@@ -53,7 +53,13 @@ class AzumaRatelimit {
          */
         this.after = -1;
     }
-
+    /**
+     * Generates an update object for this class to parse
+     * @static
+     * @param {*} request
+     * @param {*} headers
+     * @returns {Object}
+     */
     static constructData(request, headers) {
         if (!request || !headers) throw new Error('Request and Headers can\'t be null');
         return {
@@ -67,23 +73,48 @@ class AzumaRatelimit {
             reactions: request.route.includes('reactions')
         };
     }
-
+    /**
+     * Gets the offset from api and this system
+     * @static
+     * @param {string} date
+     * @returns {number}
+     */
     static getAPIOffset(date) {
         return new Date(date).getTime() - Date.now();
     }
-
+    /**
+     * Calculates the reset for ratelimit
+     * @static
+     * @param {string} reset
+     * @param {string} date
+     * @returns {number}
+     */
     static calculateReset(reset, date) {
         return new Date(Number(reset) * 1000).getTime() - AzumaRatelimit.getAPIOffset(date);
     }
-    
+    /**
+     * If this ratelimit cache is considered as ratelimit hit to stop requests from occuring
+     * @type {boolean}
+     * @readonly
+     */
     get limited() {
         return !!this.manager.timeout || this.remaining <= 0 && Date.now() < this.reset;
     }
-    
+    /**
+     * Timeout before the ratelimit clears, takes account the offset as well
+     * @type {number}
+     * @readonly
+     */
     get timeout() {
         return this.reset + this.manager.azuma.options.requestOffset - Date.now();
     }
-
+    /**
+     * Updates the data in this cached ratelimit info
+     * @param {string} method
+     * @param {string} route
+     * @param {Object} data
+     * @returns {void}
+     */
     update(method, route, { date, limit, remaining, reset, hash, after, global, reactions } = {}) {
         // Set or Update this queue ratelimit data
         this.limit = !isNaN(limit) ? Number(limit) : Infinity;
