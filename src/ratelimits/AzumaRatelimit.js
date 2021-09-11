@@ -133,7 +133,7 @@ class AzumaRatelimit {
         }
         // https://github.com/discordapp/discord-api-docs/issues/182
         if (reactions) 
-            this.reset = new Date(date).getTime() - AzumaRatelimit.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
+            this.reset = new Date(date).getTime() - AzumaRatelimit.getAPIOffset(date) + this.manager.azuma.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
             this.manager.azuma.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
