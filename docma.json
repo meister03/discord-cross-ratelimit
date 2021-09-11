@@ -17,15 +17,15 @@
         "sanitize":false
     },
     "app":{
-        "title":"Walther Wa2000 | Synced Ratelimits for Discord.JS v12",
+        "title":"Azuma | Synced ratelimits for Discord.JS",
         "routing":"query",
         "entrance":"content:readme",
-        "base":"/Walther-WA2000"
+        "base":"/Azuma"
     },
     "template":{
         "options":{
             "title":{
-                "label":"Wa2000",
+                "label":"Azuma",
                 "href":"."
             },
             "sidebar":{
@@ -61,7 +61,7 @@
                     },
                     {
                         "label":"GitHub",
-                        "href":"https://github.com/Deivu/Walther-WA2000"
+                        "href":"https://github.com/Deivu/Azuma"
                     }
                 ]
             }

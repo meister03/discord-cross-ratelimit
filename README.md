@@ -68,7 +68,7 @@ class Example extends Client {
   }
 }
 ```
-> WARNING: DO NOT CHANGE ANYTHING ON THIS PARAMETERS. EX: `request.thing = yourthing;` It may cause unforseen problems that you may not want to deal with
+> WARNING: DO NOT CHANGE OR RUN ANY FUNCTION FROM THE PARAMETERS. It's designed to be used as read-only values
 
 ## Example Bot
 https://github.com/Deivu/Kongou
