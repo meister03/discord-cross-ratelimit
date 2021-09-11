@@ -87,7 +87,6 @@ class Azuma extends EventEmitter {
         const cluster = new Cluster(this.manager);
         cluster.client.rest = new RequestManager(cluster.client, this.options.handlerSweepInterval);
         await cluster.init();
-        return;
     }
 }
 

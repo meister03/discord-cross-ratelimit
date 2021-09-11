@@ -1,0 +1,10 @@
+node_modules
+docs
+assets
+.gitattributes
+.idea
+.gitignore
+.eslintrc.yml
+.eslintignore
+docma.json
+README.md

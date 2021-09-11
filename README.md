@@ -15,6 +15,10 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 ✅ Supports Discord.JS v13
 
+## Installation
+
+> npm i --save azuma
+
 ## TODO
 
 * Support for `options.invalidRequestWarningInterval`

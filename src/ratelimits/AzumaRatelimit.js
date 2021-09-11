@@ -6,7 +6,7 @@ const { Util } = require('discord.js');
   */
 class AzumaRatelimit {
     /**
-     * @param {RatelimitManager} manager The manager for this ratelimit queue
+     * @param {AzumaManager} manager The manager for this ratelimit queue
      * @param {string} id The ID of this ratelimit queue
      * @param {string} hash The ratelimit hash for this ratelimit queue
      * @param {string} route The route for this ratelimit queue
@@ -14,7 +14,7 @@ class AzumaRatelimit {
     constructor(manager, id, hash, route) {
         /**
          * The manager for this ratelimit queue
-         * @type {RatelimitManager}
+         * @type {AzumaManager}
          */
         this.manager = manager;
         /**

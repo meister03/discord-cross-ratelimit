@@ -33,8 +33,8 @@ class RequestHandler {
          */
         this.id = `${hash}:${major}`;
         /**
-         * The amount of queued reqeust in this handler
-         * @type {string}
+         * The current queued requests for this handler
+         * @type {AsyncQueue}
          */
         this.queue = new AsyncQueue();
     }

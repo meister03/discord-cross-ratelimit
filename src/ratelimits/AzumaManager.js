@@ -41,7 +41,7 @@ class AzumaManager {
             if (OP !== data?.op) return;
             switch(data.type) {
                 case 'handler': 
-                    message.reply(this.fetch(data));
+                    message.reply(this.get(data));
                     break;
                 case 'bucket': 
                     message.reply(this.update(data));
@@ -60,7 +60,7 @@ class AzumaManager {
         return Date.now() - this.timeout;
     }
 
-    fetch({ id, hash, route }) {
+    get({ id, hash, route }) {
         let limiter = this.handlers.get(id);
         if (!limiter) {
             limiter = new AzumaRatelimit(this, id, hash, route);

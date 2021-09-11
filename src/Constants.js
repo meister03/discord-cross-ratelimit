@@ -7,6 +7,11 @@ module.exports = {
         hashInactiveTimeout: 240000,
         requestOffset: 500
     },
+    Events: {
+        ON_REQUEST: 'onRequest',
+        ON_RESPONSE: 'onResponse',
+        ON_TOO_MANY_REQUEST: 'onTooManyRequest'
+    },
     createHandler: (manager, handler) => {
         const global = !!manager.timeout;
         const timeout = global ? manager.globalTimeout : handler.timeout;
@@ -44,10 +49,5 @@ module.exports = {
             type: 'hash',
             id
         };
-    },
-    Events: {
-        ON_REQUEST: 'onRequest',
-        ON_RESPONSE: 'onResponse',
-        ON_TOO_MANY_REQUEST: 'onTooManyRequest'
     }
 };
