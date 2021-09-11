@@ -2,9 +2,9 @@ import { AzumaManager } from './ratelimits/AzumaManager';
 import { AzumaRatelimit } from './ratelimits/AzumaRatelimit';
 
 export interface DefaultOptions {
-    handlerSweepInterval: number;
-    hashInactiveTimeout: number;
-    requestOffset: number;
+    handlerSweepInterval?: number;
+    inactiveTimeout?: number;
+    requestOffset?: number;
 }
 
 export interface Events {
