@@ -1,24 +1,41 @@
 const { Collection } = require('@discordjs/collection');
 const { Constants } = require('discord.js');
 const { resolve } = require('path');
-
-
-const { Wa2000Request, Wa2000FetchHash, Wa2000BeingTsunOnly }= require('../../Constants.js');
+const { createFetchHashMessage, createFetchHandlerMessage, createUpdateHandlerMessage }= require('../Constants.js');
+const EventEmitter = require('events');
 const RequestHandler = require('./RequestHandler.js');
 const Router = require('./Router.js');
-
 const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
 
 /**
-  * RequestManager, the request manager of the non-master process that communicates with the master process
+  * The request manager of the non-master process that communicates with the master process
   * @class RequestManager
   */
-class RequestManager {
+class RequestManager extends EventEmitter {
     /**
      * @param {DiscordClient} client The client for this request manager
      * @param {number} interval The interval ms for the handler sweeper for this request manager
      */
     constructor(client, interval) {
+        super();
+        /**
+         * Emitted when a request was made
+         * @event Azuma#onRequest
+         * @param {Object} data
+         * @memberOf Azuma
+         */
+        /**
+         * Emitted when a request was fulfilled 
+         * @event Azuma#onResponse
+         * @param {Object} data
+         * @memberOf Azuma
+         */
+        /**
+         * Emitted when an actual 429 was hit
+         * @event Azuma#onTooManyRequest
+         * @param {Object} data
+         * @memberOf Azuma
+         */
         /**
          * The client for this request manager
          * @type {DiscordClient}
@@ -72,21 +89,20 @@ class RequestManager {
         throw new Error('TOKEN_MISSING');
     }
 
-    // Fetch Hashes
-    fetch(id) {
-        return this.server.send(Wa2000FetchHash(id), { receptive: true });
+    fetchHash(id) {
+        return this.server.send(createFetchHashMessage(id), { receptive: true });
     }
 
-    // Handle Ratelimit
-    async send(id, hash, method, route, data = null) {
-        const response = await this.server.send(Wa2000Request(id, hash, method, route, data), { receptive: true });
-        if (!response.errored) return;
-        throw Wa2000BeingTsunOnly(response);
+    fetchInfo(...args) {
+        return this.server.send(createFetchHandlerMessage(...args), { receptive: true });
     }
 
-    // Make API request
+    updateInfo(...args) {
+        return this.server.send(createUpdateHandlerMessage(...args), { receptive: true });
+    }
+
     async request(method, route, options = {}) {
-        const hash = await this.fetch(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
+        const hash = await this.fetchHash(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
         let handler = this.handlers.get(`${hash}:${options.major}`);
         if (!handler) {
             handler = new RequestHandler(this, hash, options);

@@ -1,11 +1,10 @@
 const { Util } = require('discord.js');
-const { AsyncQueue } = require('@sapphire/async-queue');
 
 /**
-  * RatelimitQueue, a sequential request queue for each ratelimit hash
-  * @class RatelimitQueue
+  * Represents a ratelimit cache data for an endpoint
+  * @class AzumaRatelimit
   */
-class RatelimitQueue {
+class AzumaRatelimit {
     /**
      * @param {RatelimitManager} manager The manager for this ratelimit queue
      * @param {string} id The ID of this ratelimit queue
@@ -53,8 +52,6 @@ class RatelimitQueue {
          * @type {number}
          */
         this.after = -1;
-
-        this.queue = new AsyncQueue();
     }
 
     static constructData(request, headers) {
@@ -76,7 +73,7 @@ class RatelimitQueue {
     }
 
     static calculateReset(reset, date) {
-        return new Date(Number(reset) * 1000).getTime() - RatelimitQueue.getAPIOffset(date);
+        return new Date(Number(reset) * 1000).getTime() - AzumaRatelimit.getAPIOffset(date);
     }
     
     get limited() {
@@ -84,22 +81,18 @@ class RatelimitQueue {
     }
     
     get timeout() {
-        return this.reset + this.manager.wa2000.options.requestOffset - Date.now();
+        return this.reset + this.manager.azuma.options.requestOffset - Date.now();
     }
 
-    get inactive() {
-        return this.queue.remaining === 0 && !this.limited;
-    }
-
-    async update(method, route, { date, limit, remaining, reset, hash, after, global, reactions } = {}) {
+    update(method, route, { date, limit, remaining, reset, hash, after, global, reactions } = {}) {
         // Set or Update this queue ratelimit data
         this.limit = !isNaN(limit) ? Number(limit) : Infinity;
         this.remaining = !isNaN(remaining) ? Number(remaining) : -1;
-        this.reset = !isNaN(reset) ? RatelimitQueue.calculateReset(reset, date) : Date.now();
+        this.reset = !isNaN(reset) ? AzumaRatelimit.calculateReset(reset, date) : Date.now();
         this.after = !isNaN(after) ? Number(after) * 1000 : -1;
         // Handle buckets via the hash header retroactively
         if (hash && hash !== this.hash) {
-            this.manager.wa2000.emit('debug', 
+            this.manager.azuma.emit('debug', 
                 'Received a bucket hash update\n' + 
                 `  Route        : ${route}\n` + 
                 `  Old Hash     : ${this.hash}\n` + 
@@ -108,44 +101,16 @@ class RatelimitQueue {
             this.manager.hashes.set(`${method}:${route}`, hash);
         }
         // https://github.com/discordapp/discord-api-docs/issues/182
-        if (reactions) this.reset = new Date(date).getTime() - RatelimitQueue.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
+        if (reactions) 
+            this.reset = new Date(date).getTime() - AzumaRatelimit.getAPIOffset(date) + this.manager.wa2000.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
-            this.manager.wa2000.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
-            this.manager.timeout = Util.delayFor(this.after);
-            await this.manager.timeout;
-            this.manager.timeout = null;
+            this.manager.azuma.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
+            this.manager.timeout = Date.now() - this.after;
+            Util.delayFor(this.after)
+                .then(() => this.manager.timeout = 0);
         }
-    }
-
-    async handle() {
-        await this.queue.wait();
-        try {
-            await this.wait();
-        } finally {
-            this.queue.shift();
-        }
-    }
-
-    // This is a private method just dont call it
-    wait() {
-        // Rejoice you can still do your query
-        if (!this.limited) return Util.delayFor(0);
-        // Emit ratelimit event
-        this.manager.wa2000.emit('ratelimit', {
-            route: this.route, 
-            bucket: this.id, 
-            limit: this.limit, 
-            remaining: this.remaining, 
-            after: this.after, 
-            timeout: this.timeout,
-            global: !!this.manager.timeout
-        });
-        // If this exists, means we hit global timeout, on other request that isn't in this endpoint
-        if (this.manager.timeout) return this.manager.timeout;
-        // if not then just calculate the timeout in this route then wait it out
-        return Util.delayFor(this.timeout);
     }
 }
 
-module.exports = RatelimitQueue;
+module.exports = AzumaRatelimit;

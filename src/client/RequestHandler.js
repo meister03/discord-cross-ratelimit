@@ -1,13 +1,13 @@
 const { AsyncQueue } = require('@sapphire/async-queue');
 const { resolve } = require('path');
-const { Util } = require('discord.js');
-const { constructData } = require('../RatelimitQueue.js');
-
+const { Util, Constants } = require('discord.js');
+const { constructData } = require('../ratelimits/AzumaRatelimit.js');
+const { Events } = require('../Constants.js');
 const HTTPError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/HTTPError.js')));
 const DiscordAPIError = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/DiscordAPIError.js')));
 
 /**
-  * ReqeustHandler, the handler for the non-master process that executes the rest requests
+  * The handler for the non-master process that executes the rest requests
   * @class RequestHandler
   */
 class RequestHandler {
@@ -32,7 +32,10 @@ class RequestHandler {
          * @type {string}
          */
         this.id = `${hash}:${major}`;
-
+        /**
+         * The amount of queued reqeust in this handler
+         * @type {string}
+         */
         this.queue = new AsyncQueue();
     }
 
@@ -57,11 +60,25 @@ class RequestHandler {
     }
 
     async execute(request) {
-        // Let master process "pause" this request until master process says its safe to resume due to ratelimits
-        await this.manager.send(this.id, this.hash, request.method, request.route);    
+        // Get ratelimit data
+        const { limited, limit, global, timeout } = await this.manager.fetchInfo(this.id, this.hash, request.route);
+        if (global || limited) {
+            if (this.manager.client.listenerCount(Constants.Events.RATE_LIMIT)) 
+                this.manager.client.emit(Constants.Events.RATE_LIMIT, {
+                    method: request.method, 
+                    path: request.path, 
+                    route: request.route,
+                    hash: this.hash,
+                    timeout, 
+                    limit,  
+                    global
+                });
+            await Util.delayFor(timeout);
+        }
         // Perform the request
         let res;
         try {
+            if (this.manager.listenerCount(Events.ON_REQUEST)) this.manager.emit(Events.ON_REQUEST, { request });
             res = await request.make();
         } catch (error) {
             // Retry the specified number of times for request abortions
@@ -71,6 +88,7 @@ class RequestHandler {
             request.retries++;
             return this.execute(request);
         }
+        if (this.manager.listenerCount(Events.ON_RESPONSE)) this.manager.emit(Events.ON_RESPONSE, { request, response: res });
         let after;
         if (res.headers) {
             // Build ratelimit data for master process
@@ -78,7 +96,7 @@ class RequestHandler {
             // Just incase I messed my ratelimit handling up, so you can avoid getting banned
             after = !isNaN(data.after) ? Number(data.after) * 1000 : -1;
             // Send ratelimit data, and wait for possible global ratelimit manager halt
-            await this.manager.send(this.id, this.hash, request.method, request.route, data);
+            await this.manager.updateInfo(this.id, this.hash, request.method, request.route, data);
         }
         // Handle 2xx and 3xx responses
         if (res.ok) 
@@ -89,9 +107,12 @@ class RequestHandler {
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
             if (res.status === 429) {
+                if (this.manager.listenerCount(Events.ON_TOO_MANY_REQUEST)) this.manager.emit(Events.ON_TOO_MANY_REQUEST, { request, response: res });
                 // A ratelimit was hit, You did something stupid @saya
                 this.manager.client.emit('debug', 
                     'Encountered unexpected 429 ratelimit\n' + 
+                    `  Route          : ${request.route}\n` + 
+                    `  Request        : ${request.method}\n` +
                     `  Hash:Major     : ${this.id}\n` + 
                     `  Request Route  : ${request.route}\n` + 
                     `  Retry After    : ${after}ms` 

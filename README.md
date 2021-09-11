@@ -1,55 +1,70 @@
-# Walther WA2000
-Your tsundere gun-girl that aims to integrate proper and globally synced ratelimit handling for Discord.JS
+# Azuma
+A package that actually syncs your ratelimits across all your clusters on Discord.JS
 
-> (c) Girl's Frontline for [Wa2000-chan](https://iopwiki.com/wiki/WA2000)
+> The Shipgirl Project; [Azuma](https://azurlane.koumakan.jp/Azuma)
 
 <p align="center">
-  <img src="https://iopwiki.com/images/c/ce/WA2000_costume3.png">
+  <img src="https://azurlane.netojuu.com/w/images/4/42/Azuma.png">
 </p>
 
 ## Features
 
-✅ Easy to use
+✅ An easy drop in solution for those who wants globally synced ratelimits
 
-✅ Tsundere Gun-Girl Waifu
-
-✅ A drop in solution for your 429 problems
+✅ Follows the original Discord.JS rest manager, so no breaking changes needed to do
 
 ✅ Supports Discord.JS v13
 
-## Installation
-> npm i Deivu/Walther-WA2000 --save
+## TODO
 
-## Documentation
-> https://deivu.github.io/Walther-WA2000/
+* Support for `options.invalidRequestWarningInterval`
+
+* Support for `options.restGlobalRateLimit`
+
+* Support for `options.rejectOnRateLimit`
 
 ## Support
 > https://discord.gg/FVqbtGu `#development` channel
 
 ## Example
-> Running Wa2000 should be similar on how you do it with Kurasuta [Click Me](https://github.com/Deivu/Kurasuta#example), Except Your Index.JS will need minor changes
+> Running Azuma is the same with [Kurasuta](https://github.com/Deivu/Kurasuta#example), except on you need to change your index.js based on example below
 
 ## Example of index.js
 ```js
 const { join } = require('path');
-const Walther = require('wa2000');
+const Azuma = require('azuma');
 const YourBotClient = require('./YourBotClient.js')
 const KurasutaOptions = {
     client: YourBotClient,
     timeout: 90000,
     token: 'idk'
 };
-const WaltherOptions = {
+const AzumaOptions = {
     handlerSweepInterval: 150000,
     hashInactiveTimeout: 300000,
     requestOffset: 500
 };
-const walther = new Walther(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions,  WaltherOptions);
+const azuma = new Azuma(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions, AzumaOptions);
 // If you need to access the Kurasuta Sharding Manager, example, you want to listen to shard ready event
-walther.manager.on('shardReady', id => console.log(`Shard ${id} is now ready`));
-// Call spawn from walther, not from kurasuta
-walther.spawn();
+azuma.manager.on('shardReady', id => console.log(`Shard ${id} is now ready`));
+// Call spawn from azuma, not from kurasuta
+azuma.spawn();
 ```
+
+## Pro Tip
+> Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actul 429 via an event emitter, which you can use to make metrics on
+```js
+const { Client } = require('discord.js');
+class Example extends Client {
+  constructor(...args) {
+    super();
+    this.rest.on('onRequest', ({ request }) => /* do some parses on your thing for metrics or log it idk */);
+    this.rest.on('onResponse', ({ request, response }) => /* do some parses on your thing for metrics or log it idk */);
+    this.rest.on('onTooManyRequest', ({ request, response }) => /* do some probably, warning logs here? since this is an actual 429 and can get you banned for an hour */);
+  }
+}
+```
+> WARNING: DO NOT CHANGE ANYTHING ON THIS PARAMETERS. EX: `request.thing = yourthing;` It may cause unforseen problems that you may not want to deal with
 
 ## Example Bot
 https://github.com/Deivu/Kongou

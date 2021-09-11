@@ -1,8 +1,8 @@
 {
-  "name": "wa2000",
-  "version": "2.1.0",
+  "name": "azuma",
+  "version": "1.0.0",
   "description": "Your tsundere gun-girl that aims to integrate global ratelimits handling for Discord.JS, Supports v13",
-  "main": "src/Wa2000.js",
+  "main": "src/azuma.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Deivu/WA2000.git"
