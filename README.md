@@ -11,7 +11,7 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 ✅ An easy drop in solution for those who wants globally synced ratelimits
 
-✅ Follows the original Discord.JS rest manager, so no breaking changes needed to do
+✅ Follows the original Discord.JS rest manager, so no breaking changes needed
 
 ✅ Supports Discord.JS v13
 
