@@ -60,7 +60,7 @@ azuma.spawn();
 ```
 
 ## Pro Tip
-> Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actul 429 via an event emitter, which you can use to make metrics on
+> Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actual 429 via an event emitter, which you can use to make metrics on
 ```js
 const { Client } = require('discord.js');
 class Example extends Client {
