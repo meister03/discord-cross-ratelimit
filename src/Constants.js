@@ -1,4 +1,7 @@
+const { ShardingManager } = require('kurasuta');
 const OP = 'AZUMA';
+
+let manager = ShardingManager;
 
 module.exports = {
     OP,
@@ -49,5 +52,10 @@ module.exports = {
             type: 'hash',
             id
         };
-    }
+    },
+    setShardingManager: extended => {
+        if (!(extended instanceof ShardingManager)) throw new Error('Extended class not an instance of sharding manager');
+        manager = extended;
+    },
+    getShardingManager: () => manager
 };

@@ -1,7 +1,6 @@
-const { ShardingManager } = require('kurasuta');
 const { isPrimary } = require('cluster');
 const { Util } = require('discord.js');
-const { DefaultOptions } = require('./Constants.js');
+const { DefaultOptions, getShardingManager } = require('./Constants.js');
 const EventEmitter = require('events');
 const AzumaIPC = require('./ratelimits/AzumaIPC.js');
 const AzumaManager = require('./ratelimits/AzumaManager.js');
@@ -65,7 +64,7 @@ class Azuma extends EventEmitter {
          * Your Kurasuta sharding manager class
          * @type {KurasutaShardingManager}
          */
-        this.manager = new ShardingManager(path, managerOptions);
+        this.manager = new (getShardingManager())(path, managerOptions);
         /**
          * Options for Azuma
          * @type {Object}
