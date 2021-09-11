@@ -40,7 +40,7 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 ## Example of index.js
 ```js
 const { join } = require('path');
-const Azuma = require('azuma');
+const { Azuma } = require('azuma');
 const YourBotClient = require('./YourBotClient.js')
 const KurasutaOptions = {
     client: YourBotClient,
