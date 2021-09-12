@@ -4,6 +4,7 @@ import { AzumaIPC } from './typings/ratelimits/AzumaIPC';
 import { AzumaManager } from './typings/ratelimits/AzumaManager';
 import { AzumaRatelimit, ParsedHeaders } from './typings/ratelimits/AzumaRatelimit';
 import { Azuma, RatelimitOptions } from './typings/Azuma';
+import * as Structures from './typings/Structures'
 import * as Constants from './typings/Constants';
 
 declare module 'azuma' {
@@ -18,6 +19,7 @@ declare module 'azuma' {
         ParsedHeaders,
         Azuma,
         RatelimitOptions,
+        Structures,
         Constants
     };
 }
