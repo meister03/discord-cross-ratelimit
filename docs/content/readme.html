@@ -12,7 +12,7 @@
 <h2 id="features">Features</h2>
 <hr />
 <p>✅ An easy drop in solution for those who wants globally synced ratelimits</p>
-<p>✅ Follows the original Discord.JS rest manager, so no breaking changes needed to do</p>
+<p>✅ Follows the original Discord.JS rest manager, so no breaking changes needed</p>
 <p>✅ Supports Discord.JS v13</p>
 <h2 id="installation">Installation</h2>
 <hr />
@@ -47,7 +47,7 @@
 <h2 id="example-of-indexjs">Example of index.js</h2>
 <hr />
 <pre><code class="js">const { join } = require('path');
-const Azuma = require('azuma');
+const { Azuma } = require('azuma');
 const YourBotClient = require('./YourBotClient.js')
 const KurasutaOptions = {
     client: YourBotClient,
@@ -67,7 +67,7 @@ azuma.spawn();</code></pre>
 <h2 id="pro-tip">Pro Tip</h2>
 <hr />
 <blockquote>
-<p>Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actul 429 via an event emitter, which you can use to make metrics on</p>
+<p>Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actual 429 via an event emitter, which you can use to make metrics on</p>
 <pre><code class="js">const { Client } = require('discord.js');
 class Example extends Client {
   constructor(...args) {

@@ -79,10 +79,6 @@ class AzumaManager {
     }
     /**
      * Updates a specific handler from cache
-     * @param id
-     * @param hash
-     * @param method
-     * @param route
      * @param {Object} data
      * @returns {void}
      */
