@@ -3,7 +3,6 @@ const { ShardingManager } = require('kurasuta');
 const Struct = {
     ShardingManager: ShardingManager
 };
-
 const beforeSpawn = [];
 
 class Structures {
@@ -14,7 +13,7 @@ class Structures {
     static get(name) {
         return Struct[name];
     }
-
+    
     static setBeforeSpawn(fn) {
         beforeSpawn.push(fn);
     }

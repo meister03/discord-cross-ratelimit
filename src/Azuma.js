@@ -65,7 +65,7 @@ class Azuma extends EventEmitter {
          * Your Kurasuta sharding manager class
          * @type {KurasutaShardingManager}
          */
-        this.manager = new get('ShardingManager')(path, managerOptions);
+        this.manager = new (get('ShardingManager'))(path, managerOptions);
         /**
          * Options for Azuma
          * @type {Object}
@@ -91,7 +91,7 @@ class Azuma extends EventEmitter {
             while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
             this.ratelimits = new AzumaManager(this);
             const tasks = getBeforeSpawn();
-            if (tasks.length) await Promise.all(tasks.map(task => task(this)));
+            if (tasks.length) await Promise.all(tasks.map(task => task(this.manager)));
             await this.manager.spawn();
             return;
         }
