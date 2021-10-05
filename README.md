@@ -15,6 +15,13 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 ✅ Supports Discord.JS v13
 
+
+## NOTE
+
+> You need to use [Kurasuta](https://github.com/DevYukine/Kurasuta) to make this work as this package depends on it
+
+> v2.x.x drops support for Discord.JS v12
+
 ## Installation
 
 > npm i --save azuma
@@ -35,7 +42,7 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 > https://discord.gg/FVqbtGu `#development` channel
 
 ## Example
-> Running Azuma is the same with [Kurasuta](https://github.com/Deivu/Kurasuta#example), except on you need to change your index.js based on example below
+> Running Azuma is the same with [Kurasuta](https://github.com/DevYukine/Kurasuta#example), except on you need to change your index.js based on example below
 
 ## Example of index.js
 ```js
