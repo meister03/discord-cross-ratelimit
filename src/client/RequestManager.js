@@ -59,7 +59,7 @@ class RequestManager extends EventEmitter {
          * The request handlers that this request manager handles
          * @type {Cheshire<string, RequestHandler>}
          */
-        this.handlers = new Cheshire({ lru: true, lifetime });
+        this.handlers = new Cheshire({ lru: true, lifetime, disposer: (_, handler) => handler.inactive });
     }
     /**
      * The client for the IPC
