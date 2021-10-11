@@ -3,8 +3,7 @@ const OP = 'AZUMA';
 module.exports = {
     OP,
     DefaultOptions: {
-        handlerSweepInterval: 120000,
-        hashInactiveTimeout: 240000,
+        inactiveTimeout: 240000,
         requestOffset: 500
     },
     Events: {

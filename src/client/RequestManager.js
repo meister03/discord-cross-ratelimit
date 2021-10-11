@@ -1,8 +1,10 @@
-const { Collection } = require('@discordjs/collection');
+const EventEmitter = require('events');
+
+const { Cheshire } = require('cheshire');
 const { Constants } = require('discord.js');
 const { resolve } = require('path');
 const { createFetchHashMessage, createFetchHandlerMessage, createUpdateHandlerMessage }= require('../Constants.js');
-const EventEmitter = require('events');
+
 const RequestHandler = require('./RequestHandler.js');
 const Router = require('./Router.js');
 const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
@@ -21,9 +23,9 @@ const APIRequest = require(resolve(require.resolve('discord.js').replace('index.
 class RequestManager extends EventEmitter {
     /**
      * @param {DiscordClient} client The client for this request manager
-     * @param {number} interval The interval ms for the handler sweeper for this request manager
+     * @param {number} lifetime The TTL for ratelimit handlers
      */
-    constructor(client, interval) {
+    constructor(client, lifetime) {
         super();
         /**
          * Emitted when a request was made
@@ -55,19 +57,9 @@ class RequestManager extends EventEmitter {
         this.versioned = true;
         /**
          * The request handlers that this request manager handles
-         * @type {Collection<string, RequestHandler>}
+         * @type {Cheshire<string, RequestHandler>}
          */
-        this.handlers = new Collection();
-        /**
-         * Inactive handlers sweeper
-         * @type {Timeout|null}
-         */
-        this.sweeper = null;
-
-        if (interval > 0) {
-            this.sweeper = setInterval(() => this.handlers.sweep(handler => handler.inactive), interval);
-            this.sweeper.unref();
-        }
+        this.handlers = new Cheshire({ lru: true, lifetime });
     }
     /**
      * The client for the IPC

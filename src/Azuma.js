@@ -48,8 +48,7 @@ class Azuma extends EventEmitter {
      * @param {string} path The path of your extended Kurasuta "BaseCluster.js"
      * @param {KurasutaOptions} [managerOptions={}] Options to initialize Kurasuta with
      * @param {Object} [ratelimitOptions={}] Options to initialize Azuma with
-     * @param {number} [ratelimitOptions.handlerSweepInterval=120000] Interval for sweeping inactive cached ratelimit buckets, in ms
-     * @param {number} [ratelimitOptions.inactiveTimeout=240000] TTL for unaccessed ratelimit cached hashes and ratelimit info in master process, in ms
+     * @param {number} [ratelimitOptions.inactiveTimeout=240000] TTL for cached hashes, data and handlers. in ms
      * @param {number} [ratelimitOptions.requestOffset=500] Extra time in ms to wait before continuing to make REST requests
      */
     constructor(path, managerOptions = {}, ratelimitOptions = {}) {
@@ -97,7 +96,7 @@ class Azuma extends EventEmitter {
         }
         const Cluster = require(this.manager.path);
         const cluster = new Cluster(this.manager);
-        cluster.client.rest = new RequestManager(cluster.client, this.options.handlerSweepInterval);
+        cluster.client.rest = new RequestManager(cluster.client, this.options.inactiveTimeout);
         await cluster.init();
     }
 }

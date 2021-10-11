@@ -55,8 +55,7 @@ const KurasutaOptions = {
     token: 'idk'
 };
 const AzumaOptions = {
-    handlerSweepInterval: 150000,
-    hashInactiveTimeout: 300000,
+    inactiveTimeout: 300000,
     requestOffset: 500
 };
 const azuma = new Azuma(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions, AzumaOptions);

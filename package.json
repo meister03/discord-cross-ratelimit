@@ -1,6 +1,6 @@
 {
   "name": "azuma",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A package that actually syncs your ratelimits across all your clusters on Discord.JS",
   "main": "index.js",
   "types": "index.d.ts",
@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/Deivu/Azuma/blob/master/README.md",
   "keywords": [
+    "discord",
     "discord.js",
     "discordjs",
     "discord-bot",
@@ -25,9 +26,8 @@
     "node"
   ],
   "dependencies": {
-    "@discordjs/collection": "^0.2.1",
     "@sapphire/async-queue": "^1.1.2",
-    "cheshire": "github:Deivu/Cheshire#v1.0.0",
+    "cheshire": "github:Deivu/Cheshire#2.0.2",
     "discord.js": ">=13.0.0",
     "kurasuta": "^3.0.1"
   }

@@ -1,4 +1,4 @@
-import { Collection } from 'discord.js';
+import { Cheshire } from 'cheshire';
 import { EventEmitter } from 'events';
 import { ParsedHeaders } from '../ratelimits/AzumaRatelimit';
 import { RequestHandler } from './RequestHandler';
@@ -24,8 +24,7 @@ export class RequestManager extends EventEmitter {
     constructor(client: any, interval: number);
     public client: any;
     public versioned: boolean;
-    public handlers: Collection<string, RequestHandler>;
-    public sweeper: ReturnType<typeof setTimeout> | null;
+    public handlers: Cheshire<string, RequestHandler>;
     public endpoint: string;
     public readonly server: any;
     public readonly api: any;

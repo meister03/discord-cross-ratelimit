@@ -14,6 +14,14 @@
 <p>✅ An easy drop in solution for those who wants globally synced ratelimits</p>
 <p>✅ Follows the original Discord.JS rest manager, so no breaking changes needed</p>
 <p>✅ Supports Discord.JS v13</p>
+<h2 id="note">NOTE</h2>
+<hr />
+<blockquote>
+<p>You need to use <a href="https://github.com/DevYukine/Kurasuta">Kurasuta</a> to make this work as this package depends on it</p>
+</blockquote>
+<blockquote>
+<p>v2.x.x drops support for Discord.JS v12</p>
+</blockquote>
 <h2 id="installation">Installation</h2>
 <hr />
 <blockquote>
@@ -42,7 +50,7 @@
 <h2 id="example">Example</h2>
 <hr />
 <blockquote>
-<p>Running Azuma is the same with <a href="https://github.com/Deivu/Kurasuta#example">Kurasuta</a>, except on you need to change your index.js based on example below</p>
+<p>Running Azuma is the same with <a href="https://github.com/DevYukine/Kurasuta#example">Kurasuta</a>, except on you need to change your index.js based on example below</p>
 </blockquote>
 <h2 id="example-of-indexjs">Example of index.js</h2>
 <hr />
@@ -55,8 +63,7 @@ const KurasutaOptions = {
     token: 'idk'
 };
 const AzumaOptions = {
-    handlerSweepInterval: 150000,
-    hashInactiveTimeout: 300000,
+    inactiveTimeout: 300000,
     requestOffset: 500
 };
 const azuma = new Azuma(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions, AzumaOptions);
