@@ -129,7 +129,7 @@ class RequestManager extends EventEmitter {
         return this.server.send(createUpdateHandlerMessage(...args), { receptive: true });
     }
     /**
-     * Gets a specific handler from cache
+     * Executes a request
      * @param {string} method
      * @param {route} route
      * @param {Object} data

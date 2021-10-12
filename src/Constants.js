@@ -12,7 +12,7 @@ module.exports = {
         ON_TOO_MANY_REQUEST: 'onTooManyRequest'
     },
     createHandler: (manager, handler) => {
-        const global = !!manager.timeout;
+        const global = manager.timeout !== 0;
         const timeout = global ? manager.globalTimeout : handler.timeout;
         return {
             limit: handler.limit,

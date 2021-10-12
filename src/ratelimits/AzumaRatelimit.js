@@ -137,7 +137,7 @@ class AzumaRatelimit {
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
             this.manager.azuma.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
-            this.manager.timeout = Date.now() - this.after;
+            this.manager.timeout = Date.now() + this.after;
             Util.delayFor(this.after)
                 .then(() => this.manager.timeout = 0);
         }

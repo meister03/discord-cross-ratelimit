@@ -31,6 +31,7 @@ class AzumaManager {
          * @type {number}
          */
         this.timeout = 0;
+        // listener
         this.server.on('message', message => {
             if (!message) return;
             const data = message.data;
@@ -62,7 +63,10 @@ class AzumaManager {
      * @readonly
      */
     get globalTimeout() {
-        return Date.now() - this.timeout;
+        if (this.timeout === 0) return 0;
+        const timeout = this.timeout - Date.now() + this.azuma.options.requestOffset;
+        if (Math.sign(timeout) === -1) return 0;
+        return timeout;
     }
     /**
      * Gets a specific handler from cache
