@@ -1,13 +1,13 @@
-const RequestHandler = require('./src/client/RequestHandler.js');
-const RequestManager = require('./src/client/RequestManager.js');
-const AzumaIPC = require('./src/ratelimits/AzumaIPC.js');
-const AzumaManager = require('./src/ratelimits/AzumaManager.js');
-const AzumaRatelimit = require('./src/ratelimits/AzumaRatelimit.js');
-const Azuma = require('./src/Azuma.js');
-const Structures = require('./src/Structures.js');
-const Constants = require('./src/Constants.js');
+import RequestHandler from './src/client/RequestHandler.js';
+import RequestManager from './src/client/RequestManager.js';
+import AzumaIPC from './src/ratelimits/AzumaIPC.js';
+import AzumaManager from './src/ratelimits/AzumaManager.js';
+import AzumaRatelimit from './src/ratelimits/AzumaRatelimit.js';
+import Azuma from './src/Azuma.js';
+import Structures from './src/Structures.js';
+import Constants from './src/Constants.js';
 
-module.exports = {
+export {
     RequestHandler,
     RequestManager,
     AzumaIPC,

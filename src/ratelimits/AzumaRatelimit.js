@@ -1,4 +1,4 @@
-const { Util } = require('discord.js');
+import { Util } from 'discord.js';
 
 /**
  * Represents a ratelimit cache data for an endpoint
@@ -144,4 +144,4 @@ class AzumaRatelimit {
     }
 }
 
-module.exports = AzumaRatelimit;
+export default AzumaRatelimit;

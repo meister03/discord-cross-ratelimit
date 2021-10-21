@@ -1,6 +1,6 @@
 const OP = 'AZUMA';
 
-module.exports = {
+export default {
     OP,
     DefaultOptions: {
         inactiveTimeout: 240000,

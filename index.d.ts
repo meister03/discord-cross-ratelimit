@@ -7,19 +7,17 @@ import { Azuma, RatelimitOptions } from './typings/Azuma';
 import { Structures } from './typings/Structures';
 import * as Constants from './typings/Constants';
 
-declare module 'azuma' {
-    export { 
-        RequestHandler,
-        RequestManager,
-        Request,
-        EmittedInfo,
-        AzumaIPC,
-        AzumaManager,
-        AzumaRatelimit,
-        ParsedHeaders,
-        Azuma,
-        RatelimitOptions,
-        Structures,
-        Constants
-    };
-}
+export { 
+    RequestHandler,
+    RequestManager,
+    Request,
+    EmittedInfo,
+    AzumaIPC,
+    AzumaManager,
+    AzumaRatelimit,
+    ParsedHeaders,
+    Azuma,
+    RatelimitOptions,
+    Structures,
+    Constants
+};

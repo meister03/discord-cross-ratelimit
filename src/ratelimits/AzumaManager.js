@@ -1,6 +1,6 @@
-const { Cheshire } = require('cheshire');
-const { OP, createHandler } = require('../Constants.js');
-const AzumaRatelimit = require('./AzumaRatelimit.js');
+import { Cheshire } from 'cheshire';
+import Constants from '../Constants.js';
+import AzumaRatelimit from './AzumaRatelimit.js';
 
 /**
   * Governs all the ratelimits across all your clusters / process
@@ -36,7 +36,7 @@ class AzumaManager {
             if (!message) return;
             const data = message.data;
             // This OP should be "ALWAYS RECEPTIVE"
-            if (OP !== data?.op) return;
+            if (Constants.OP !== data?.op) return;
             switch(data.type) {
                 case 'handler': 
                     message.reply(this.get(data));
@@ -79,7 +79,7 @@ class AzumaManager {
             limiter = new AzumaRatelimit(this, id, hash, route);
             this.handlers.set(id, limiter);
         }
-        return createHandler(this, limiter);
+        return Constants.createHandler(this, limiter);
     }
     /**
      * Updates a specific handler from cache
@@ -96,4 +96,4 @@ class AzumaManager {
     }
 }
 
-module.exports = AzumaManager;
+export default AzumaManager;

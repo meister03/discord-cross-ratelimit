@@ -1,11 +1,11 @@
-const { isPrimary } = require('cluster');
-const { Util } = require('discord.js');
-const { get, getBeforeSpawn } = require('./Structures.js');
-const { DefaultOptions } = require('./Constants.js');
-const EventEmitter = require('events');
-const AzumaIPC = require('./ratelimits/AzumaIPC.js');
-const AzumaManager = require('./ratelimits/AzumaManager.js');
-const RequestManager = require('./client/RequestManager.js');
+import { isPrimary } from 'cluster';
+import { Util } from 'discord.js';
+import Structures from './Structures.js';
+import Constants from './Constants.js';
+import EventEmitter from 'events';
+import AzumaIPC from './ratelimits/AzumaIPC.js';
+import AzumaManager from './ratelimits/AzumaManager.js';
+import RequestManager from './client/RequestManager.js';
 
 /**
  * Discord.JS Client
@@ -64,12 +64,12 @@ class Azuma extends EventEmitter {
          * Your Kurasuta sharding manager class
          * @type {KurasutaShardingManager}
          */
-        this.manager = new (get('ShardingManager'))(path, managerOptions);
+        this.manager = new (Structures.get('ShardingManager'))(path, managerOptions);
         /**
          * Options for Azuma
          * @type {Object}
          */
-        this.options = Util.mergeDefault(DefaultOptions, ratelimitOptions);
+        this.options = Util.mergeDefault(Constants.DefaultOptions, ratelimitOptions);
         /**
          * Ratelimit cache for all your clusters, null on non primary process
          * @type {AzumaManager|null}
@@ -89,16 +89,16 @@ class Azuma extends EventEmitter {
             this.manager.ipc = new AzumaIPC(this.manager);
             while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
             this.ratelimits = new AzumaManager(this);
-            const tasks = getBeforeSpawn();
+            const tasks = Structures.getBeforeSpawn();
             if (tasks.length) await Promise.all(tasks.map(task => task(this.manager)));
             await this.manager.spawn();
             return;
         }
-        const Cluster = require(this.manager.path);
-        const cluster = new Cluster(this.manager);
+        const manager = await import(this.manager.path);
+        const cluster = new manager.default(this.manager);
         cluster.client.rest = new RequestManager(cluster.client, this.options.inactiveTimeout);
         await cluster.init();
     }
 }
 
-module.exports = Azuma;
+export default Azuma;

@@ -1,7 +1,8 @@
 {
   "name": "azuma",
-  "version": "2.1.2",
+  "version": "3.0.0",
   "description": "A package that actually syncs your ratelimits across all your clusters on Discord.JS",
+  "type":"module",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {

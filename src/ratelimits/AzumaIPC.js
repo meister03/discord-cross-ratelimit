@@ -1,4 +1,4 @@
-const { MasterIPC, IPCEvents } = require('kurasuta');
+import { MasterIPC, IPCEvents } from 'kurasuta';
 
 class AzumaIPC extends MasterIPC {
     _incommingMessage(message) {
@@ -8,4 +8,4 @@ class AzumaIPC extends MasterIPC {
     }
 }
 
-module.exports = AzumaIPC;
+export default AzumaIPC;

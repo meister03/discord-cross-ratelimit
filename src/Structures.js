@@ -1,4 +1,4 @@
-const { ShardingManager } = require('kurasuta');
+import { ShardingManager } from 'kurasuta';
 
 const Struct = {
     ShardingManager: ShardingManager
@@ -25,4 +25,4 @@ class Structures {
     }
 }
 
-module.exports = Structures;
+export default Structures;

@@ -1,13 +1,13 @@
-const EventEmitter = require('events');
+import EventEmitter from 'events';
+import Https from 'node:https';
 
-const { Cheshire } = require('cheshire');
-const { Constants } = require('discord.js');
-const { resolve } = require('path');
-const { createFetchHashMessage, createFetchHandlerMessage, createUpdateHandlerMessage }= require('../Constants.js');
+import { Cheshire } from 'cheshire';
+import { Constants as DiscordConstants } from 'discord.js';
+import { Constants as AzumaConstants } from '../Constants.js';
 
-const RequestHandler = require('./RequestHandler.js');
-const Router = require('./Router.js');
-const APIRequest = require(resolve(require.resolve('discord.js').replace('index.js', '/rest/APIRequest.js')));
+import DiscordRequest from './structures/DiscordRequest.js';
+import RequestHandler from './RequestHandler.js';
+import Router from './Router.js';
 
 /**
  * The parameter emitted in onRequest, onResponse, onTooManyRequest events
@@ -60,6 +60,11 @@ class RequestManager extends EventEmitter {
          * @type {Cheshire<string, RequestHandler>}
          */
         this.handlers = new Cheshire({ lru: true, lifetime, disposer: (_, handler) => handler.inactive });
+        /**
+         * The agent used for this manager
+         * @type {Agent}
+         */
+        this.agent = new Https.Agent({ ...client.options.http.agent, keepAlive: true });
     }
     /**
      * The client for the IPC
@@ -83,7 +88,7 @@ class RequestManager extends EventEmitter {
      * @readonly
      */
     get cdn() {
-        return Constants.Endpoints.CDN(this.client.options.http.cdn);
+        return DiscordConstants.Endpoints.CDN(this.client.options.http.cdn);
     }
     /**
      * Sets the endpoint for http api
@@ -110,7 +115,7 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<string>}
      */
     fetchHash(id) {
-        return this.server.send(createFetchHashMessage(id), { receptive: true });
+        return this.server.send(AzumaConstants.createFetchHashMessage(id), { receptive: true });
     }
     /**
      * Gets a cached ratelimit info in central cache
@@ -118,7 +123,7 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<*>}
      */
     fetchInfo(...args) {
-        return this.server.send(createFetchHandlerMessage(...args), { receptive: true });
+        return this.server.send(AzumaConstants.createFetchHandlerMessage(...args), { receptive: true });
     }
     /**
      * Updates a cached ratelimit info in central cache
@@ -126,7 +131,7 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<void>}
      */
     updateInfo(...args) {
-        return this.server.send(createUpdateHandlerMessage(...args), { receptive: true });
+        return this.server.send(AzumaConstants.createUpdateHandlerMessage(...args), { receptive: true });
     }
     /**
      * Executes a request
@@ -142,8 +147,8 @@ class RequestManager extends EventEmitter {
             handler = new RequestHandler(this, hash, options);
             this.handlers.set(handler.id, handler);
         }
-        return handler.push(new APIRequest(this, method, route, options));
+        return handler.push(new DiscordRequest(this, method, route, options));
     }
 }
 
-module.exports = RequestManager;
+export default RequestManager;
