@@ -1,7 +1,7 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import { Util, Constants as DiscordConstants } from 'discord.js';
-import { Constants as AzumaConstants } from '../Constants.js';
 
+import AzumaConstants from '../Constants.js';
 import RequestError from './structures/RequestError.js';
 import DiscordError from './structures/DiscordError.js';
 import AzumaRatelimit from '../ratelimits/AzumaRatelimit.js';

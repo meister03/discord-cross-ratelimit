@@ -3,8 +3,8 @@ import Https from 'node:https';
 
 import { Cheshire } from 'cheshire';
 import { Constants as DiscordConstants } from 'discord.js';
-import { Constants as AzumaConstants } from '../Constants.js';
 
+import AzumaConstants from '../Constants.js';
 import DiscordRequest from './structures/DiscordRequest.js';
 import RequestHandler from './RequestHandler.js';
 import Router from './Router.js';
