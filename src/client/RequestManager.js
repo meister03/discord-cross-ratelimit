@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import Https from 'node:https';
+import Https from 'https';
 
 import { Cheshire } from 'cheshire';
 import { Constants as DiscordConstants } from 'discord.js';

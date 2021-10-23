@@ -1,6 +1,6 @@
 import { Constants } from 'discord.js';
 import FormData from '@discordjs/form-data';
-import fetch from 'node-fetch';
+import Fetch from 'node-fetch';
 
 class DiscordRequest {
     constructor(rest, method, path, options) {
@@ -55,7 +55,7 @@ class DiscordRequest {
         }
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), this.client.options.restRequestTimeout).unref();
-        return fetch(url, {
+        return Fetch(url, {
             method: this.method,
             agent: this.rest.agent,
             signal: controller.signal,

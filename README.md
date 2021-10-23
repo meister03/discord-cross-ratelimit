@@ -22,6 +22,8 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 > v2.x.x drops support for Discord.JS v12
 
+> v3.x.x makes the package ESM only
+
 ## Installation
 
 > npm i --save azuma
@@ -70,11 +72,11 @@ azuma.spawn();
 ```js
 const { Client } = require('discord.js');
 class Example extends Client {
-  constructor(...args) {
-    super();
+  login() {
     this.rest.on('onRequest', ({ request }) => /* do some parses on your thing for metrics or log it idk */);
     this.rest.on('onResponse', ({ request, response }) => /* do some parses on your thing for metrics or log it idk */);
     this.rest.on('onTooManyRequest', ({ request, response }) => /* do some probably, warning logs here? since this is an actual 429 and can get you banned for an hour */);
+    return super.login('token');
   }
 }
 ```
