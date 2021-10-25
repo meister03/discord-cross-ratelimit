@@ -22,6 +22,9 @@
 <blockquote>
 <p>v2.x.x drops support for Discord.JS v12</p>
 </blockquote>
+<blockquote>
+<p>v3.x.x makes the package ESM only</p>
+</blockquote>
 <h2 id="installation">Installation</h2>
 <hr />
 <blockquote>
@@ -54,9 +57,9 @@
 </blockquote>
 <h2 id="example-of-indexjs">Example of index.js</h2>
 <hr />
-<pre><code class="js">const { join } = require('path');
-const { Azuma } = require('azuma');
-const YourBotClient = require('./YourBotClient.js')
+<pre><code class="js">import { Azuma } from 'azuma';
+import { Client } = from 'discord.js';
+
 const KurasutaOptions = {
     client: YourBotClient,
     timeout: 90000,
@@ -66,7 +69,8 @@ const AzumaOptions = {
     inactiveTimeout: 300000,
     requestOffset: 500
 };
-const azuma = new Azuma(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions, AzumaOptions);
+// Initialize Azuma
+const azuma = new Azuma(new URL('BaseCluster.js', import.meta.url), KurasutaOptions, AzumaOptions);
 // If you need to access the Kurasuta Sharding Manager, example, you want to listen to shard ready event
 azuma.manager.on('shardReady', id =&gt; console.log(`Shard ${id} is now ready`));
 // Call spawn from azuma, not from kurasuta
@@ -75,21 +79,19 @@ azuma.spawn();</code></pre>
 <hr />
 <blockquote>
 <p>Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actual 429 via an event emitter, which you can use to make metrics on</p>
-<pre><code class="js">const { Client } = require('discord.js');
-class Example extends Client {
-  constructor(...args) {
-    super();
-    this.rest.on('onRequest', ({ request }) =&gt; /* do some parses on your thing for metrics or log it idk */);
-    this.rest.on('onResponse', ({ request, response }) =&gt; /* do some parses on your thing for metrics or log it idk */);
-    this.rest.on('onTooManyRequest', ({ request, response }) =&gt; /* do some probably, warning logs here? since this is an actual 429 and can get you banned for an hour */);
+<pre><code class="js">import { Client } = from 'discord.js';</code></pre>
+</blockquote>
+<p>class Example extends Client {
+  login() {
+    this.rest.on('onRequest', ({ request }) =&gt; /* do some parses on your thing for metrics or log it idk <em>/);
+    this.rest.on('onResponse', ({ request, response }) =&gt; /</em> do some parses on your thing for metrics or log it idk <em>/);
+    this.rest.on('onTooManyRequest', ({ request, response }) =&gt; /</em> do some probably, warning logs here? since this is an actual 429 and can get you banned for an hour */);
+    return super.login('token');
   }
-}</code></pre>
-<p>WARNING: DO NOT CHANGE OR RUN ANY FUNCTION FROM THE PARAMETERS. It's designed to be used as read-only values</p>
-</blockquote>
-<h2 id="example-bot">Example Bot</h2>
-<hr />
-<p><a href="https://github.com/Deivu/Kongou">https://github.com/Deivu/Kongou</a></p>
-<blockquote>
-<p>Based from my Handling from <code>@Kashima</code>, Made with ❤ by @Sāya#0113</p>
-</blockquote>
-</body></html>
+}</p>
+<pre><code>&gt; WARNING: DO NOT CHANGE OR RUN ANY FUNCTION FROM THE PARAMETERS. It's designed to be used as read-only values
+
+## Example Bot
+https://github.com/Deivu/Kongou
+
+&gt; Based from my Handling from `@Kashima`, Made with ❤ by @Sāya#0113</code></pre></body></html>

@@ -27,7 +27,7 @@
     "node"
   ],
   "dependencies": {
-    "@sapphire/async-queue": "^1.1.6",
+    "@sapphire/async-queue": "^1.1.7",
     "cheshire": "github:Deivu/Cheshire#2.0.2",
     "discord.js": ">=13.0.0",
     "kurasuta": "^3.0.1"

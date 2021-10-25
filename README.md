@@ -48,9 +48,9 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 ## Example of index.js
 ```js
-const { join } = require('path');
-const { Azuma } = require('azuma');
-const YourBotClient = require('./YourBotClient.js')
+import { Azuma } from 'azuma';
+import { Client } = from 'discord.js';
+
 const KurasutaOptions = {
     client: YourBotClient,
     timeout: 90000,
@@ -60,7 +60,8 @@ const AzumaOptions = {
     inactiveTimeout: 300000,
     requestOffset: 500
 };
-const azuma = new Azuma(join(__dirname, 'YourBaseCluster.js'), KurasutaOptions, AzumaOptions);
+// Initialize Azuma
+const azuma = new Azuma(new URL('BaseCluster.js', import.meta.url), KurasutaOptions, AzumaOptions);
 // If you need to access the Kurasuta Sharding Manager, example, you want to listen to shard ready event
 azuma.manager.on('shardReady', id => console.log(`Shard ${id} is now ready`));
 // Call spawn from azuma, not from kurasuta
@@ -70,7 +71,8 @@ azuma.spawn();
 ## Pro Tip
 > Azuma also exposes when a request was made, when a response from a request is received, and if you hit an actual 429 via an event emitter, which you can use to make metrics on
 ```js
-const { Client } = require('discord.js');
+import { Client } = from 'discord.js';
+
 class Example extends Client {
   login() {
     this.rest.on('onRequest', ({ request }) => /* do some parses on your thing for metrics or log it idk */);
