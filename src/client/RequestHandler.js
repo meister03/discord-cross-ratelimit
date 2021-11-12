@@ -44,9 +44,10 @@ class RequestHandler {
      * @param {Response} res
      * @returns {Promise<Buffer|Object>}
      */
-    static parseResponse(res) {
-        if (res.headers.get('content-type').startsWith('application/json')) return res.json();
-        return res.buffer();
+    static async parseResponse(res) {
+        if (res.headers.get('content-type').startsWith('application/json')) return await res.json();
+        const arrayBuffer = await res.arrayBuffer();
+        return Buffer.from(arrayBuffer);
     }
     /**
      * If this handler is inactive
