@@ -20,9 +20,11 @@ A package that actually syncs your ratelimits across all your clusters on Discor
 
 > You need to use [Kurasuta](https://github.com/DevYukine/Kurasuta) to make this work as this package depends on it
 
-> v2.x.x drops support for Discord.JS v12
+> v1.x.x initial release (Latest in 1x branch is version: 1.1.0)
 
-> v3.x.x makes the package ESM only
+> v2.x.x drops support for Discord.JS v12 (Latest in 2x branch is version: 2.1.2)
+
+> v3.x.x makes the package ESM only (Current)
 
 ## Installation
 
