@@ -83,11 +83,11 @@ class Azuma extends EventEmitter {
      */
     async spawn() {
         if (isPrimary) {
-            while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
+            while(this.manager.ipc.server.status !== 0) await Util.delayFor(1);
             await this.manager.ipc.server.close();
             this.manager.ipc.server.removeAllListeners();
             this.manager.ipc = new AzumaIPC(this.manager);
-            while(this.manager.ipc.server.status !== 1) await Util.delayFor(1);
+            while(this.manager.ipc.server.status !== 0) await Util.delayFor(1);
             this.ratelimits = new AzumaManager(this);
             const tasks = Structures.getBeforeSpawn();
             if (tasks.length) await Promise.all(tasks.map(task => task(this.manager)));
