@@ -142,6 +142,7 @@ class RequestManager extends EventEmitter {
      */
     async request(method, route, options = {}) {
         const hash = await this.fetchHash(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
+        if (hash.startsWith('Global')) options.major = 'id';
         let handler = this.handlers.get(`${hash}:${options.major}`);
         if (!handler) {
             handler = new RequestHandler(this, hash, options);
