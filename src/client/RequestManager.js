@@ -1,8 +1,7 @@
 import EventEmitter from 'events';
 import Https from 'https';
 
-import { Cheshire } from 'cheshire';
-import { Constants as DiscordConstants } from 'discord.js';
+import { LimitedCollection, Constants as DiscordConstants } from 'discord.js';
 
 import AzumaConstants from '../Constants.js';
 import DiscordRequest from './structures/DiscordRequest.js';
@@ -25,7 +24,7 @@ class RequestManager extends EventEmitter {
      * @param {DiscordClient} client The client for this request manager
      * @param {number} lifetime The TTL for ratelimit handlers
      */
-    constructor(client, lifetime) {
+    constructor(client) {
         super();
         /**
          * Emitted when a request was made
@@ -57,9 +56,9 @@ class RequestManager extends EventEmitter {
         this.versioned = true;
         /**
          * The request handlers that this request manager handles
-         * @type {Cheshire<string, RequestHandler>}
+         * @type {LimitedCollection<string, RequestHandler>}
          */
-        this.handlers = new Cheshire({ lru: true, lifetime, disposer: (_, handler) => handler.inactive });
+        this.handlers = new LimitedCollection({ sweepInterval: 60, sweepFilter: () => handler => handler.inactive });
         /**
          * The agent used for this manager
          * @type {Agent}

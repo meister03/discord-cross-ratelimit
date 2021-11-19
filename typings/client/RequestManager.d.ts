@@ -1,4 +1,4 @@
-import { Cheshire } from 'cheshire';
+import { LimitedCollection } from 'discord.js';
 import { EventEmitter } from 'events';
 import { ParsedHeaders } from '../ratelimits/AzumaRatelimit';
 import { RequestHandler } from './RequestHandler';
@@ -24,7 +24,7 @@ export class RequestManager extends EventEmitter {
     constructor(client: any, interval: number);
     public client: any;
     public versioned: boolean;
-    public handlers: Cheshire<string, RequestHandler>;
+    public handlers: LimitedCollection<string, RequestHandler>;
     public endpoint: string;
     public readonly server: any;
     public readonly api: any;
