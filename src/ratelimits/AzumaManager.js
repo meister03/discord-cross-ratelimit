@@ -1,5 +1,4 @@
 import { Cheshire } from 'cheshire';
-import { LimitedCollection } from 'discord.js';
 import Constants from '../Constants.js';
 import AzumaRatelimit from './AzumaRatelimit.js';
 
@@ -24,9 +23,9 @@ class AzumaManager {
         this.hashes = new Cheshire({ lru: true, lifetime: this.azuma.options.inactiveTimeout });
         /**
          * Currently cached ratelimit info
-         * @type {LimitedCollection<string, AzumaRatelimit>}
+         * @type {Cheshire<string, AzumaRatelimit>}
          */
-        this.handlers = new LimitedCollection({ sweepInterval: 60, sweepFilter: () => handler => handler.inactive });
+        this.handlers = new Cheshire({ lru: true, lifetime: this.azuma.options.inactiveTimeout });
         /**
          * Global ratelimit timeout
          * @type {number}
