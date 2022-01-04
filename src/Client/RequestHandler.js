@@ -1,10 +1,10 @@
-import { AsyncQueue } from '@sapphire/async-queue';
-import { Util, Constants as DiscordConstants } from 'discord.js';
+const { AsyncQueue } = require('@sapphire/async-queue');
+const Discord = require('discord.js');
 
-import AzumaConstants from '../Constants.js';
-import RequestError from './structures/RequestError.js';
-import DiscordError from './structures/DiscordError.js';
-import AzumaRatelimit from '../ratelimits/AzumaRatelimit.js';
+const Constants = require('../Util/Constants.js');
+const RequestError = require('./structures/RequestError.js');
+const DiscordError = require('./structures/DiscordError.js');
+const Ratelimit = require('../Bridge/Ratelimit.js');
 
 /**
   * The handler for the non-master process that executes the rest requests
@@ -82,8 +82,8 @@ class RequestHandler {
         // Get ratelimit data
         const { limited, limit, global, timeout } = await this.manager.fetchInfo(this.id, this.hash, request.route);
         if (global || limited) {
-            if (this.manager.client.listenerCount(DiscordConstants.Events.RATE_LIMIT)) 
-                this.manager.client.emit(DiscordConstants.Events.RATE_LIMIT, {
+            if (this.manager.client.listenerCount(Discord.Constants.Events.RATE_LIMIT)) 
+                this.manager.client.emit(Discord.Constants.Events.RATE_LIMIT, {
                     method: request.method, 
                     path: request.path, 
                     route: request.route,
@@ -92,13 +92,13 @@ class RequestHandler {
                     limit,  
                     global
                 });
-            await Util.delayFor(timeout);
+            await Discord.Util.delayFor(timeout);
         }
         // Perform the request
         let res;
         try {
-            if (this.manager.listenerCount(AzumaConstants.Events.ON_REQUEST)) 
-                this.manager.emit(AzumaConstants.Events.ON_REQUEST, { request });
+            if (this.manager.listenerCount(Constants.Events.ON_REQUEST)) 
+                this.manager.emit(Constants.Events.ON_REQUEST, { request });
             res = await request.make();
         } catch (error) {
             // Retry the specified number of times for request abortions
@@ -108,12 +108,12 @@ class RequestHandler {
             request.retries++;
             return this.execute(request);
         }
-        if (this.manager.listenerCount(AzumaConstants.Events.ON_RESPONSE)) 
-            this.manager.emit(AzumaConstants.Events.ON_RESPONSE, { request, response: res });
+        if (this.manager.listenerCount(Constants.Events.ON_RESPONSE)) 
+            this.manager.emit(Constants.Events.ON_RESPONSE, { request, response: res });
         let after;
         if (res.headers) {
             // Build ratelimit data for master process
-            const data = AzumaRatelimit.constructData(request, res.headers);
+            const data = Ratelimit.constructData(request, res.headers);
             // Just incase I messed my ratelimit handling up, so you can avoid getting banned
             after = !isNaN(data.after) ? Number(data.after) * 1000 : -1;
             // Send ratelimit data, and wait for possible global ratelimit manager halt
@@ -128,8 +128,8 @@ class RequestHandler {
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
             if (res.status === 429) {
-                if (this.manager.listenerCount(AzumaConstants.Events.ON_TOO_MANY_REQUEST)) 
-                    this.manager.emit(AzumaConstants.Events.ON_TOO_MANY_REQUEST, { request, response: res });
+                if (this.manager.listenerCount(Constants.Events.ON_TOO_MANY_REQUEST)) 
+                    this.manager.emit(Constants.Events.ON_TOO_MANY_REQUEST, { request, response: res });
                 // A ratelimit was hit, You did something stupid @saya
                 this.manager.client.emit('debug', 
                     'Encountered unexpected 429 ratelimit\n' + 
@@ -140,7 +140,7 @@ class RequestHandler {
                     `  Retry After    : ${after}ms` 
                 );
                 // Retry after, but add 500ms on the top of original retry after
-                await Util.delayFor(after + 500);
+                await Discord.Util.delayFor(after + 500);
                 return this.execute(request);
             }
             // Handle possible malformed requests
@@ -165,4 +165,4 @@ class RequestHandler {
     }
 }
 
-export default RequestHandler;
+module.exports = RequestHandler;

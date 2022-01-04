@@ -1,6 +1,6 @@
-const OP = 'AZUMA';
+const OP = 'CRM'; // Cross Ratelimit Manager
 
-export default {
+module.exports = {
     OP,
     DefaultOptions: {
         inactiveTimeout: 240000,

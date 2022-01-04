@@ -73,4 +73,4 @@ class DiscordError extends Error {
  * @see {@link https://discord.com/developers/docs/reference#error-messages}
  */
 
-export default DiscordError;
+module.exports = DiscordError;

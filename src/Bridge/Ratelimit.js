@@ -1,10 +1,10 @@
-import { Util } from 'discord.js';
+const { Util } = require('discord.js');
 
 /**
  * Represents a ratelimit cache data for an endpoint
  * @class AzumaRatelimit
  */
-class AzumaRatelimit {
+class Ratelimit {
     /**
      * @param {AzumaManager} manager The manager for this ratelimit queue
      * @param {string} id The ID of this ratelimit queue
@@ -90,7 +90,7 @@ class AzumaRatelimit {
      * @returns {number}
      */
     static calculateReset(reset, date) {
-        return new Date(Number(reset) * 1000).getTime() - AzumaRatelimit.getAPIOffset(date);
+        return new Date(Number(reset) * 1000).getTime() - Ratelimit.getAPIOffset(date);
     }
     /**
      * If this ratelimit cache is considered as ratelimit hit to stop requests from occuring
@@ -106,7 +106,7 @@ class AzumaRatelimit {
      * @readonly
      */
     get timeout() {
-        return this.reset + this.manager.azuma.options.requestOffset - Date.now();
+        return this.reset + this.manager.bridge.ratelimit.options.requestOffset - Date.now();
     }
     /**
      * Updates the data in this cached ratelimit info
@@ -119,11 +119,11 @@ class AzumaRatelimit {
         // Set or Update this queue ratelimit data
         this.limit = !isNaN(limit) ? Number(limit) : Infinity;
         this.remaining = !isNaN(remaining) ? Number(remaining) : -1;
-        this.reset = !isNaN(reset) ? AzumaRatelimit.calculateReset(reset, date) : Date.now();
+        this.reset = !isNaN(reset) ? Ratelimit.calculateReset(reset, date) : Date.now();
         this.after = !isNaN(after) ? Number(after) * 1000 : -1;
         // Handle buckets via the hash header retroactively
         if (hash && hash !== this.hash) {
-            this.manager.azuma.emit('debug', 
+            this.manager.bridge.emit('debug', 
                 'Received a bucket hash update\n' + 
                 `  Route        : ${route}\n` + 
                 `  Old Hash     : ${this.hash}\n` + 
@@ -133,10 +133,10 @@ class AzumaRatelimit {
         }
         // https://github.com/discordapp/discord-api-docs/issues/182
         if (reactions) 
-            this.reset = new Date(date).getTime() - AzumaRatelimit.getAPIOffset(date) + this.manager.azuma.sweepInterval;
+            this.reset = new Date(date).getTime() - Ratelimit.getAPIOffset(date) + this.manager.bridge.ratelimit.options.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
-            this.manager.azuma.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
+            this.manager.bridge.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
             this.manager.timeout = Date.now() + this.after;
             Util.delayFor(this.after)
                 .then(() => this.manager.timeout = 0);
@@ -144,4 +144,4 @@ class AzumaRatelimit {
     }
 }
 
-export default AzumaRatelimit;
+module.exports = Ratelimit;

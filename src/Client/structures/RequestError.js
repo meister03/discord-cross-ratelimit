@@ -49,4 +49,4 @@ class RequestError extends Error {
     }
 }
 
-export default RequestError;
+module.exports = RequestError;

@@ -1,4 +1,4 @@
-import { SnowflakeUtil } from 'discord.js';
+const { SnowflakeUtil } = require('discord.js');
 
 const noop = () => {}; // eslint-disable-line no-empty-function
 const methods = ['get', 'post', 'delete', 'patch', 'put'];
@@ -46,4 +46,4 @@ function buildRoute(manager) {
     return new Proxy(noop, handler);
 }
 
-export default buildRoute;
+module.exports = buildRoute;

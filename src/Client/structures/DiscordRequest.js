@@ -1,6 +1,6 @@
-import { Constants } from 'discord.js';
-import FormData from '@discordjs/form-data';
-import Fetch from 'node-fetch';
+const { Constants } = require('discord.js');
+const FormData =  require('@discordjs/form-data');
+const Fetch = require('node-fetch');
 
 class DiscordRequest {
     constructor(rest, method, path, options) {
@@ -65,4 +65,4 @@ class DiscordRequest {
     }
 }
 
-export default DiscordRequest;
+module.exports = DiscordRequest;

@@ -1,12 +1,12 @@
-import EventEmitter from 'events';
-import Https from 'https';
+const {EventEmitter} = require('events');
+const Https = require('https');
 
-import { LimitedCollection, Constants as DiscordConstants } from 'discord.js';
+const Discord = require('discord.js');
 
-import AzumaConstants from '../Constants.js';
-import DiscordRequest from './structures/DiscordRequest.js';
-import RequestHandler from './RequestHandler.js';
-import Router from './Router.js';
+const Constants = require('../Util/Constants.js');
+const DiscordRequest  = require('./structures/DiscordRequest.js');
+const RequestHandler = require('./RequestHandler.js');
+const Router = require('./Router.js');
 
 /**
  * The parameter emitted in onRequest, onResponse, onTooManyRequest events
@@ -58,7 +58,7 @@ class RequestManager extends EventEmitter {
          * The request handlers that this request manager handles
          * @type {LimitedCollection<string, RequestHandler>}
          */
-        this.handlers = new LimitedCollection({ sweepInterval: 60, sweepFilter: () => handler => handler.inactive });
+        this.handlers = new Discord.LimitedCollection({ sweepInterval: 60, sweepFilter: () => handler => handler.inactive });
         /**
          * The agent used for this manager
          * @type {Agent}
@@ -71,7 +71,7 @@ class RequestManager extends EventEmitter {
      * @readonly
      */
     get server() {
-        return this.client.shard.ipc.server;
+        return this.client.crosshost;
     }
     /**
      * A proxy api router 
@@ -87,7 +87,7 @@ class RequestManager extends EventEmitter {
      * @readonly
      */
     get cdn() {
-        return DiscordConstants.Endpoints.CDN(this.client.options.http.cdn);
+        return Discord.Constants.Endpoints.CDN(this.client.options.http.cdn);
     }
     /**
      * Sets the endpoint for http api
@@ -114,7 +114,7 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<string>}
      */
     fetchHash(id) {
-        return this.server.send(AzumaConstants.createFetchHashMessage(id), { receptive: true });
+        return this.server.request(Constants.createFetchHashMessage(id)).then(e => e.data);
     }
     /**
      * Gets a cached ratelimit info in central cache
@@ -122,7 +122,8 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<*>}
      */
     fetchInfo(...args) {
-        return this.server.send(AzumaConstants.createFetchHandlerMessage(...args), { receptive: true });
+        console.log(...args)
+        return this.server.request(Constants.createFetchHandlerMessage(...args)).then(e => e.data);
     }
     /**
      * Updates a cached ratelimit info in central cache
@@ -130,7 +131,8 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<void>}
      */
     updateInfo(...args) {
-        return this.server.send(AzumaConstants.createUpdateHandlerMessage(...args), { receptive: true });
+        console.log(...args)
+        return this.server.request(Constants.createUpdateHandlerMessage(...args)).then(e => e.data);
     }
     /**
      * Executes a request
@@ -141,6 +143,7 @@ class RequestManager extends EventEmitter {
      */
     async request(method, route, options = {}) {
         const hash = await this.fetchHash(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
+        console.log(hash)
         if (hash.startsWith('Global')) options.major = 'id';
         let handler = this.handlers.get(`${hash}:${options.major}`);
         if (!handler) {
@@ -151,4 +154,4 @@ class RequestManager extends EventEmitter {
     }
 }
 
-export default RequestManager;
+module.exports = RequestManager;

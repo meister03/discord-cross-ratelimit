@@ -6,5 +6,6 @@ assets
 .gitignore
 .eslintrc.yml
 .eslintignore
+test
 docma.json
 README.md
