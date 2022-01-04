@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/meister03/discord-cross-ratelimit.git"
   },
-  "author": "Deivu",
+  "author": "meister03",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/meister03/discord-cross-ratelimit/issues"
