@@ -1,6 +1,6 @@
 import { LimitedCollection } from 'discord.js';
 import { EventEmitter } from 'events';
-import { ParsedHeaders } from '../ratelimits/AzumaRatelimit';
+import { ParsedHeaders } from '../Bridge/Ratelimit';
 import { RequestHandler } from './RequestHandler';
 
 export interface EmittedInfo {

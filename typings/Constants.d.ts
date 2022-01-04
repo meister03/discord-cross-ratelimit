@@ -1,5 +1,5 @@
-import { AzumaManager } from './ratelimits/AzumaManager';
-import { AzumaRatelimit } from './ratelimits/AzumaRatelimit';
+import { RatelimitManager } from '../index.js';
+import { Ratelimit } from '../index.js';
 
 export interface DefaultOptions {
     handlerSweepInterval?: number;
@@ -49,7 +49,7 @@ export interface Constants {
     OP: string;
     DefaultOptions: DefaultOptions;
     Events: Events;
-    createHandler(manager: AzumaManager, handler: AzumaRatelimit): Handler;
+    createHandler(manager: RatelimitManager, handler: Ratelimit): Handler;
     createFetchHandlerMessage(id: string, hash: string, route: string): FetchHandlerMessage;
     createUpdateHandlerMessage(id: string, hash: string, method: string, route: string, data: Object): UpdateHandlerMessage;
     createFetchHashMessage(id: string): FetchHashMessage;

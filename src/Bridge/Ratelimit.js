@@ -2,11 +2,11 @@ const { Util } = require('discord.js');
 
 /**
  * Represents a ratelimit cache data for an endpoint
- * @class AzumaRatelimit
+ * @class RateLimitManager
  */
 class Ratelimit {
     /**
-     * @param {AzumaManager} manager The manager for this ratelimit queue
+     * @param {RatelimitManager} manager The manager for this ratelimit queue
      * @param {string} id The ID of this ratelimit queue
      * @param {string} hash The ratelimit hash for this ratelimit queue
      * @param {string} route The route for this ratelimit queue
@@ -14,7 +14,7 @@ class Ratelimit {
     constructor(manager, id, hash, route) {
         /**
          * The manager for this ratelimit queue
-         * @type {AzumaManager}
+         * @type {RatelimitManager}
          */
         this.manager = manager;
         /**
@@ -106,7 +106,7 @@ class Ratelimit {
      * @readonly
      */
     get timeout() {
-        return this.reset + this.manager.bridge.ratelimit.options.requestOffset - Date.now();
+        return this.reset + this.manager.options.requestOffset - Date.now();
     }
     /**
      * Updates the data in this cached ratelimit info
@@ -133,7 +133,7 @@ class Ratelimit {
         }
         // https://github.com/discordapp/discord-api-docs/issues/182
         if (reactions) 
-            this.reset = new Date(date).getTime() - Ratelimit.getAPIOffset(date) + this.manager.bridge.ratelimit.options.sweepInterval;
+            this.reset = new Date(date).getTime() - Ratelimit.getAPIOffset(date) + this.manager.options.sweepInterval;
         // Global ratelimit, will halt all the requests if this is true
         if (global) {
             this.manager.bridge.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);

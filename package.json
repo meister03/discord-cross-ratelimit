@@ -1,29 +1,30 @@
 {
-  "name": "azuma",
-  "version": "3.0.5",
-  "description": "A package that actually syncs your ratelimits across all your clusters on Discord.JS",
+  "name": "discord-cross-ratelimit",
+  "version": "0.0.1",
+  "description": "A package, which syncs ratelimits of your Discord Bot on all Machines/Clusters",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Deivu/Azuma.git"
+    "url": "git+https://github.com/meister03/discord-cross-ratelimit.git"
   },
   "author": "Deivu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Deivu/Azuma/issues"
+    "url": "https://github.com/meister03/discord-cross-ratelimit/issues"
   },
-  "homepage": "https://github.com/Deivu/Azuma/blob/master/README.md",
+  "homepage": "https://github.com/meister03/discord-cross-ratelimit/issues/README.md",
   "keywords": [
     "discord",
     "discord.js",
     "discordjs",
     "discord-bot",
     "discord-ratelimits",
+    "ratelimit-syncing",
     "sharding",
-    "api",
+    "clustering",
     "ratelimits",
-    "node"
+    "api"
   ],
   "dependencies": {
     "@sapphire/async-queue": "^1.1.7",

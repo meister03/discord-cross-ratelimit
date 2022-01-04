@@ -1,4 +1,4 @@
-import { AzumaManager } from './AzumaManager';
+import { RatelimitManager } from './RatelimitManager';
 
 export interface ParsedHeaders {
     date: string;
@@ -11,9 +11,9 @@ export interface ParsedHeaders {
     reactions: boolean;
 }
 
-export class AzumaRatelimit {
-    constructor(manager: AzumaManager, id: string, hash: string, route: string);
-    public manager: AzumaManager;
+export class Ratelimit {
+    constructor(manager: RatelimitManager, id: string, hash: string, route: string);
+    public manager: RatelimitManager;
     public id: string;
     public hash: string;
     public route: string;

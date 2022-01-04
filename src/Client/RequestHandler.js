@@ -7,7 +7,7 @@ const DiscordError = require('./structures/DiscordError.js');
 const Ratelimit = require('../Bridge/Ratelimit.js');
 
 /**
-  * The handler for the non-master process that executes the rest requests
+  * The handler for the client that executes the rest requests
   * @class RequestHandler
   */
 class RequestHandler {
@@ -82,14 +82,14 @@ class RequestHandler {
         // Get ratelimit data
         const { limited, limit, global, timeout } = await this.manager.fetchInfo(this.id, this.hash, request.route);
         if (global || limited) {
-            if (this.manager.client.listenerCount(Discord.Constants.Events.RATE_LIMIT)) 
+            if (this.manager.client.listenerCount(Discord.Constants.Events.RATE_LIMIT))
                 this.manager.client.emit(Discord.Constants.Events.RATE_LIMIT, {
-                    method: request.method, 
-                    path: request.path, 
+                    method: request.method,
+                    path: request.path,
                     route: request.route,
                     hash: this.hash,
-                    timeout, 
-                    limit,  
+                    timeout,
+                    limit,
                     global
                 });
             await Discord.Util.delayFor(timeout);
@@ -97,7 +97,7 @@ class RequestHandler {
         // Perform the request
         let res;
         try {
-            if (this.manager.listenerCount(Constants.Events.ON_REQUEST)) 
+            if (this.manager.listenerCount(Constants.Events.ON_REQUEST))
                 this.manager.emit(Constants.Events.ON_REQUEST, { request });
             res = await request.make();
         } catch (error) {
@@ -108,7 +108,7 @@ class RequestHandler {
             request.retries++;
             return this.execute(request);
         }
-        if (this.manager.listenerCount(Constants.Events.ON_RESPONSE)) 
+        if (this.manager.listenerCount(Constants.Events.ON_RESPONSE))
             this.manager.emit(Constants.Events.ON_RESPONSE, { request, response: res });
         let after;
         if (res.headers) {
@@ -120,24 +120,24 @@ class RequestHandler {
             await this.manager.updateInfo(this.id, this.hash, request.method, request.route, data);
         }
         // Handle 2xx and 3xx responses
-        if (res.ok) 
+        if (res.ok)
             // Nothing wrong with the request, proceed with the next one
             return RequestHandler.parseResponse(res);
-        
+
         // Handle 4xx responses
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
             if (res.status === 429) {
-                if (this.manager.listenerCount(Constants.Events.ON_TOO_MANY_REQUEST)) 
+                if (this.manager.listenerCount(Constants.Events.ON_TOO_MANY_REQUEST))
                     this.manager.emit(Constants.Events.ON_TOO_MANY_REQUEST, { request, response: res });
                 // A ratelimit was hit, You did something stupid @saya
-                this.manager.client.emit('debug', 
-                    'Encountered unexpected 429 ratelimit\n' + 
-                    `  Route          : ${request.route}\n` + 
+                this.manager.client.emit('debug',
+                    'Encountered unexpected 429 ratelimit\n' +
+                    `  Route          : ${request.route}\n` +
                     `  Request        : ${request.method}\n` +
-                    `  Hash:Major     : ${this.id}\n` + 
-                    `  Request Route  : ${request.route}\n` + 
-                    `  Retry After    : ${after}ms` 
+                    `  Hash:Major     : ${this.id}\n` +
+                    `  Request Route  : ${request.route}\n` +
+                    `  Retry After    : ${after}ms`
                 );
                 // Retry after, but add 500ms on the top of original retry after
                 await Discord.Util.delayFor(after + 500);

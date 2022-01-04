@@ -16,7 +16,7 @@ const Router = require('./Router.js');
  */
 
 /**
-  * The request manager of the non-master process that communicates with the master process
+  * The request manager of the client that communicates with the bridge (tcp server)
   * @class RequestManager
   */
 class RequestManager extends EventEmitter {
@@ -66,7 +66,7 @@ class RequestManager extends EventEmitter {
         this.agent = new Https.Agent({ ...client.options.http.agent, keepAlive: true });
     }
     /**
-     * The client for the IPC
+     * The client for the NET IPC
      * @type {*}
      * @readonly
      */
@@ -96,6 +96,7 @@ class RequestManager extends EventEmitter {
     get endpoint() {
         return this.client.options.http.api;
     }
+
     set endpoint(endpoint) {
         this.client.options.http.api = endpoint;
     }
@@ -143,7 +144,6 @@ class RequestManager extends EventEmitter {
      */
     async request(method, route, options = {}) {
         const hash = await this.fetchHash(`${method}:${options.route}`) ?? `Global(${method}:${options.route})`;
-        console.log(hash)
         if (hash.startsWith('Global')) options.major = 'id';
         let handler = this.handlers.get(`${hash}:${options.major}`);
         if (!handler) {
