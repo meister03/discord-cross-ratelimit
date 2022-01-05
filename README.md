@@ -9,7 +9,7 @@ When Sharding/Scaling your Bot over many processes or even machines, every clien
 
 Bots which encounter a high load, often hit the (global) ratelimit, because the Shards are not informed about existing ratelimits in other Shards.
 
-Hitting less Global Ratelimits is essential, inorder to not get "cooldowned" by the ratelimit.
+Hitting less Global Ratelimits is essential, inorder to not get "cooldowned" by the ratelimit or even getting banned on too many requests.
 
 This Package syncs the ratelimits of your Bot over Machines and Clusters with no Breaking Changes, when using `Discord.js v13`
 
@@ -172,7 +172,7 @@ client.login(process.env.token);
 * All ratelimits should now be synced over all Machines  and Clusters.
 
 ### 3. Api Reference:
-* Api Refernce is on work, in the meanwhile you can look [here](https://deivu.github.io/Azuma/?api) or in the typings/code...
+* Api Reference is on work, in the meanwhile you can look [here](https://deivu.github.io/Azuma/?api) or in the typings/code...
 
 ### `new RatelimitManager(manager | bridge, options)`
 | Option | Type | Default | Description |
@@ -180,7 +180,7 @@ client.login(process.env.token);
 | manager| class| required| The Bridge/Cluster Manager to send the Ratelimit Data over the IPC |
 | options | object| `{ inactiveTimeout: 240000, requestOffset: 500 }` | Options, which should be respected, when saving and sending hashes/handers |
 
-### `new RequesttManager(client, ClusterClient | MachineShard)`
+### `new RequestManager(client, ClusterClient | MachineShard)`
 | Option | Type | Default | Description |
 | ------------- | ------------- | ------------- | ------------- |
 | client| class| required| The Discord.js Client, which is required for the http.options |
