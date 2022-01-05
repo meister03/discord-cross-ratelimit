@@ -48,7 +48,6 @@ class RatelimitManager {
         // listener for replying with the handlers, bucket and hashes...
         this.server.on('clientRequest', message => {
             if (!message) return;
-            console.log(message.raw)
             const data = message.raw;
             // This OP should be "ALWAYS RECEPTIVE"
             if (Constants.OP !== data?.op) return;
