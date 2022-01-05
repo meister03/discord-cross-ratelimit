@@ -1,12 +1,13 @@
-import { Cheshire } from 'Cheshire';
-import { server} from 'discord-cross-hosting';
+import { Cheshire } from 'cheshire';
+import { Bridge} from 'discord-cross-hosting';
+import { Manager} from 'discord-hybrid-sharding';
 import { Ratelimit } from './Ratelimit';
 import { DefaultOptions } from '../Constants'
 
 export class RatelimitManager {
-    constructor(bridge: server, options: object);
-    public bridge: sever;
-    public options: options | DefaultOptions;
+    constructor(bridge: Bridge | Manager, options: object);
+    public bridge: Bridge | Manager;
+    public options: object | DefaultOptions;
     public hashes: Cheshire<string, string>;
     public handlers: Cheshire<string, Ratelimit>;
     public timeout: number;

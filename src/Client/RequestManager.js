@@ -22,9 +22,9 @@ const Router = require('./Router.js');
 class RequestManager extends EventEmitter {
     /**
      * @param {DiscordClient} client The client for this request manager
-     * @param {number} lifetime The TTL for ratelimit handlers
+     * @param {instance} instance The Shard or ClusterClient Instance for the IPC
      */
-    constructor(client) {
+    constructor(client, instance) {
         super();
         /**
          * Emitted when a request was made
@@ -44,11 +44,21 @@ class RequestManager extends EventEmitter {
          * @param {EmittedInfo} data
          * @memberOf RequestManager
          */
+        
+        /**
+        * The client for this request manager
+        * @type {ClusterClient | Shard}
+        */
+        this.instance = instance;
+        if (!this.instance) throw new Error('ClIENT_MISSING_OPTION', 'valid Instance must be provided and be type of SHARD (discord-cross-hosting) or ClusterClient');
+
         /**
          * The client for this request manager
          * @type {DiscordClient}
          */
         this.client = client;
+        if (!this.client) throw new Error('ClIENT_MISSING_OPTION', 'valid Client must be provided and type of Discord.Client');
+
         /**
          * If this request manager is versioned
          * @type {boolean}
@@ -71,7 +81,7 @@ class RequestManager extends EventEmitter {
      * @readonly
      */
     get server() {
-        return this.client.crosshost;
+        return this.instance;
     }
     /**
      * A proxy api router 
@@ -123,7 +133,6 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<*>}
      */
     fetchInfo(...args) {
-        console.log(...args)
         return this.server.request(Constants.createFetchHandlerMessage(...args)).then(e => e.data);
     }
     /**
@@ -132,7 +141,6 @@ class RequestManager extends EventEmitter {
      * @returns {Promise<void>}
      */
     updateInfo(...args) {
-        console.log(...args)
         return this.server.request(Constants.createUpdateHandlerMessage(...args)).then(e => e.data);
     }
     /**

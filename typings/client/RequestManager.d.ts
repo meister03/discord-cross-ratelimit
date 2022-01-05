@@ -2,6 +2,8 @@ import { LimitedCollection } from 'discord.js';
 import { EventEmitter } from 'events';
 import { ParsedHeaders } from '../Bridge/Ratelimit';
 import { RequestHandler } from './RequestHandler';
+import {Shard} from 'discord-cross-hosting';
+import {Client} from 'discord-hybrid-sharding';
 
 export interface EmittedInfo {
     request: Request;
@@ -21,12 +23,12 @@ export class Request {
 }
 
 export class RequestManager extends EventEmitter {
-    constructor(client: any, interval: number);
+    constructor(client: any, instance: Client | Shard);
     public client: any;
     public versioned: boolean;
     public handlers: LimitedCollection<string, RequestHandler>;
     public endpoint: string;
-    public readonly server: any;
+    public readonly server: Client | Shard;
     public readonly api: any;
     public readonly cdn: Object;
     public getAuth(): string;

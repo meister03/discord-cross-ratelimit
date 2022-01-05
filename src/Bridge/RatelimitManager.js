@@ -11,7 +11,7 @@ const { Util } = require('discord.js');
 */
 class RatelimitManager {
     /**
-     * @param {bridge} bridge The Bridge Instance, which is created by the Package Discord-Cross-Hosting
+     * @param {bridge} bridge The Bridge Instance, which is created by the Package Discord-Cross-Hosting or the Cluster Manager
      */
     constructor(bridge, options) {
         /**
@@ -19,6 +19,7 @@ class RatelimitManager {
          * @type {bridge}
          */
         this.bridge = bridge;
+        if (!this.bridge) throw new Error('ClIENT_MISSING_OPTION', 'valid Instance must be provided and be type of Bridge (discord-cross-hosting) or Cluster.Manager (discord-hybrid-sharding)');
 
         /**
          * The Options for the ratelimit manager

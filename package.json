@@ -29,8 +29,10 @@
   "dependencies": {
     "@sapphire/async-queue": "^1.1.7",
     "cheshire": "github:Deivu/Cheshire#2.0.2",
-    "discord-cross-hosting": "^2.1.5",
-    "discord-hybrid-sharding": "^1.4.2",
     "discord.js": ">=13.0.0"
+  },
+  "devDependencies": {
+    "discord-cross-hosting": "^2.1.6",
+    "discord-hybrid-sharding": "^1.4.3"
   }
 }
