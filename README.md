@@ -21,6 +21,10 @@ This Package syncs the ratelimits of your Bot over Machines and Clusters with no
 * Can be used in combination with `discord-hybrid-sharding` & `discord-cross-hosting`
 * Fast Hash and Handlers fetching for allowing a fast processing of rest requests
 
+**Todo:** 
+* Add `invalidRequestWarningInterval` inorder to get informed about 4xx Errors and 10k Invalid Requests, which causes a ban
+* Add `restGlobalRateLimit` & `rejectOnRateLimit`
+
 ## How does it Work?
 When doing a rest request on the Discord Api, the package fetches Hashes and Handlers from the Manager, which can be a Bridge (`discord-cross-hosting`) or a Cluster.Manager (`discord-hybrid-sharding`)
 
