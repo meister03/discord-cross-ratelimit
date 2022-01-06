@@ -19,7 +19,9 @@ module.exports = {
             remaining: handler.remaining,
             limited: handler.limited,
             timeout,
-            global
+            global,
+            invalidRequestTimeout: handler.invalidRequestTimeout,
+            invalidRequestCount: handler.invalidRequestCount,
         };
     },
     createFetchHandlerMessage: (id, hash, route) => {
@@ -46,6 +48,14 @@ module.exports = {
         return {
             op: OP,
             type: 'hash',
+            id
+        };
+    },
+
+    createInvalidRequestMessage: (id) => {
+        return {
+            op: OP,
+            type: 'invalidRequest',
             id
         };
     }

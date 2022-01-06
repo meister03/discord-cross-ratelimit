@@ -127,6 +127,7 @@ class RequestManager extends EventEmitter {
     fetchHash(id) {
         return this.server.request(Constants.createFetchHashMessage(id)).then(e => e.data);
     }
+
     /**
      * Gets a cached ratelimit info in central cache
      * @param {Object} data
@@ -135,6 +136,7 @@ class RequestManager extends EventEmitter {
     fetchInfo(...args) {
         return this.server.request(Constants.createFetchHandlerMessage(...args)).then(e => e.data);
     }
+
     /**
      * Updates a cached ratelimit info in central cache
      * @param {Object} data
@@ -142,6 +144,15 @@ class RequestManager extends EventEmitter {
      */
     updateInfo(...args) {
         return this.server.request(Constants.createUpdateHandlerMessage(...args)).then(e => e.data);
+    }
+
+    /**
+    * Appends the count of invalidRequests, which happend in a 10 minutes interval
+    * @param {Object} data
+    * @returns {Promise<void>}
+    */
+    updateInvalidCount(...args) {
+        return this.server.request(Constants.createInvalidRequestMessage(...args)).then(e => e.data);
     }
     /**
      * Executes a request

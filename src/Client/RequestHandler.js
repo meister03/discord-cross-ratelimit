@@ -1,9 +1,11 @@
 const { AsyncQueue } = require('@sapphire/async-queue');
+const { setTimeout: sleep } = require('node:timers/promises');
 const Discord = require('discord.js');
 
 const Constants = require('../Util/Constants.js');
 const RequestError = require('./structures/RequestError.js');
 const DiscordError = require('./structures/DiscordError.js');
+const RateLimitError = require('./structures/RateLimitError');
 const Ratelimit = require('../Bridge/Ratelimit.js');
 
 /**
@@ -72,6 +74,32 @@ class RequestHandler {
         }
         return res;
     }
+
+    /*
+    * Determines whether the request should be queued or whether a RateLimitError should be thrown
+    */
+    async onRateLimit(request, limit, timeout, isGlobal) {
+        const { options } = this.manager.client;
+        if (!options.rejectOnRateLimit) return;
+
+        const rateLimitData = {
+            timeout,
+            limit,
+            method: request.method,
+            path: request.path,
+            route: request.route,
+            global: isGlobal,
+        };
+        const shouldThrow =
+            typeof options.rejectOnRateLimit === 'function'
+                ? await options.rejectOnRateLimit(rateLimitData)
+                : options.rejectOnRateLimit.some(route => rateLimitData.route.startsWith(route.toLowerCase()));
+        if (shouldThrow) {
+            throw new RateLimitError(rateLimitData);
+        }
+    }
+
+
     /**
      * Executes a request in this handler
      * @param {Request} request
@@ -80,7 +108,7 @@ class RequestHandler {
      */
     async execute(request) {
         // Get ratelimit data
-        const { limited, limit, global, timeout } = await this.manager.fetchInfo(this.id, this.hash, request.route);
+        const { limited, limit, global, timeout, invalidRequestTimeout, invalidRequestCount } = await this.manager.fetchInfo(this.id, this.hash, request.route);
         if (global || limited) {
             if (this.manager.client.listenerCount(Discord.Constants.Events.RATE_LIMIT))
                 this.manager.client.emit(Discord.Constants.Events.RATE_LIMIT, {
@@ -92,7 +120,19 @@ class RequestHandler {
                     limit,
                     global
                 });
-            await Discord.Util.delayFor(timeout);
+            // Determine whether a RateLimitError should be thrown
+            await this.onRateLimit(request, limit, timeout, global); // eslint-disable-line no-await-in-loop
+            await sleep(timeout);
+        }
+        if(invalidRequestTimeout){
+            if(this.manager.client.options.invalidRequestRejectOnAmount){
+                if(this.manager.client.options.invalidRequestRejectOnAmount < invalidRequestCount) {
+                    // Wait until Invalid Request Count has been reseted
+                    this.manager.client.emit('debug', '[MANAGER => CLIENTS] To many invalids requests done (limit exceeded) in the last 10 minutes, stopping all requests until the reset');
+                    await sleep(invalidRequestTimeout);
+                    return this.execute(request);
+                }
+            }
         }
         // Perform the request
         let res;
@@ -108,6 +148,7 @@ class RequestHandler {
             request.retries++;
             return this.execute(request);
         }
+
         if (this.manager.listenerCount(Constants.Events.ON_RESPONSE))
             this.manager.emit(Constants.Events.ON_RESPONSE, { request, response: res });
         let after;
@@ -124,13 +165,45 @@ class RequestHandler {
             // Nothing wrong with the request, proceed with the next one
             return RequestHandler.parseResponse(res);
 
+        // Count the invalid requests
+        if (res.status === 401 || res.status === 403 || res.status === 429) {
+            const invalidRequest = await this.manager.updateInvalidCount(this.id);
+            const emitInvalid =
+                this.manager.client.listenerCount(Constants.Events.INVALID_REQUEST_WARNING) &&
+                this.manager.client.options.invalidRequestWarningInterval > 0 &&
+                invalidRequest.count % this.manager.client.options.invalidRequestWarningInterval === 0;
+            if (emitInvalid) {
+                /**
+                 * @typedef {Object} InvalidRequestWarningData
+                 * @property {number} count Number of invalid requests that have been made in the window
+                 * @property {number} remainingTime Time in ms remaining before the count resets
+                 */
+
+                /**
+                 * Emitted periodically when the process sends invalid requests to let users avoid the
+                 * 10k invalid requests in 10 minutes threshold that causes a ban
+                 * @event BaseClient#invalidRequestWarning
+                 * @param {InvalidRequestWarningData} invalidRequestWarningData Object containing the invalid request info
+                 */
+                this.manager.client.emit(Constants.Events.INVALID_REQUEST_WARNING, {
+                    count: invalidRequest.count,
+                    remainingTime: invalidRequest.reset - Date.now(),
+                });
+            }
+            if(this.manager.client.options.invalidRequestRejectOnAmount){
+                if(this.manager.client.options.invalidRequestRejectOnAmount < invalidRequest.count) {
+                    throw new RateLimitError({name: 'InvalidRequestAmount higher than limit', method: request.method, path: request.path, route: request.route, limit: this.manager.client.options.invalidRequestRejectOnAmount, timeout: invalidRequest.reset, global: false});
+                }
+            }
+        }
+
         // Handle 4xx responses
         if (res.status >= 400 && res.status < 500) {
             // Handle ratelimited requests
             if (res.status === 429) {
                 if (this.manager.listenerCount(Constants.Events.ON_TOO_MANY_REQUEST))
                     this.manager.emit(Constants.Events.ON_TOO_MANY_REQUEST, { request, response: res });
-                // A ratelimit was hit, You did something stupid @saya
+                // A ratelimit was hit, You did something stupid 
                 this.manager.client.emit('debug',
                     'Encountered unexpected 429 ratelimit\n' +
                     `  Route          : ${request.route}\n` +
@@ -140,7 +213,7 @@ class RequestHandler {
                     `  Retry After    : ${after}ms`
                 );
                 // Retry after, but add 500ms on the top of original retry after
-                await Discord.Util.delayFor(after + 500);
+                await sleep(after + 500);
                 return this.execute(request);
             }
             // Handle possible malformed requests

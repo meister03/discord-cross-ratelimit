@@ -1,4 +1,4 @@
-const { Util } = require('discord.js');
+const { setTimeout: sleep } = require('node:timers/promises');
 
 /**
  * Represents a ratelimit cache data for an endpoint
@@ -138,7 +138,7 @@ class Ratelimit {
         if (global) {
             this.manager.bridge.emit('debug', `Globally Ratelimited, all request will stop for ${this.after}`);
             this.manager.timeout = Date.now() + this.after;
-            Util.delayFor(this.after)
+            sleep(this.after)
                 .then(() => this.manager.timeout = 0);
         }
     }

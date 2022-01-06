@@ -45,6 +45,15 @@ class RatelimitManager {
          */
         this.timeout = 0;
 
+
+        /**
+        * @type {object} [invalidRequests] A object, which counts the reset time and the amount of invalid requests
+        * @property {number} [invalidRequests.reset] The reset time of the invalid requests
+        * @property {number} [invalidRequests.count] The amount of invalid requests
+        */
+        this.invalidRequest = {count: 0, reset: 0};
+
+
         // listener for replying with the handlers, bucket and hashes...
         this.server.on('clientRequest', message => {
             if (!message) return;
@@ -60,6 +69,8 @@ class RatelimitManager {
                     break;
                 case 'hash':
                     message.reply({ data: this.hashes.get(data.id) });
+                case 'invalidRequest':
+                    message.reply({ data: this.updateInvalidRequest(data.op) });
             }
         });
     }
@@ -85,6 +96,21 @@ class RatelimitManager {
         return timeout;
     }
 
+
+    updateInvalidRequest(op) {
+        if(!op) return this.invalidRequest;
+        if(this.invalidRequest.count === 0) {
+            this.invalidRequest.reset = Date.now() + 1000*60*10; 
+            this.invalidRequest.count = 1;
+            setTimeout(() => {
+                this.invalidRequest.count = 0;
+            }, (1000*60*10));
+            return this.invalidRequest;
+        }
+        this.invalidRequest.count++;
+        return this.invalidRequest;
+    }
+
     /**
     * Gets a specific handler from cache
     * @param {Object} data
@@ -96,6 +122,8 @@ class RatelimitManager {
             limiter = new Ratelimit(this, id, hash, route);
             this.handlers.set(id, limiter);
         }
+        limiter.invalidRequestTimeout = this.invalidRequest.reset - Date.now();
+        limiter.invalidRequestCount = this.invalidRequest.count;
         return Constants.createHandler(this, limiter);
     }
     /**

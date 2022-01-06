@@ -1,5 +1,5 @@
 const { Constants } = require('discord.js');
-const FormData =  require('@discordjs/form-data');
+const FormData =  require('form-data');
 const Fetch = require('node-fetch');
 
 class DiscordRequest {
@@ -37,8 +37,8 @@ class DiscordRequest {
         let body;
         if (this.options.files?.length) {
             body = new FormData();
-            for (const file of this.options.files) {
-                if (file?.file) body.append(file.key ?? file.name, file.file, file.name);
+            for (const [index, file] of this.options.files.entries()) {
+                if (file?.file) body.append(file.key ?? `files[${index}]`, file.file, file.name);
             }
             if (typeof this.options.data !== 'undefined') {
                 if (this.options.dontUsePayloadJSON) {

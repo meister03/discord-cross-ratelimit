@@ -13,17 +13,19 @@ Hitting less Global Ratelimits is essential, inorder to not get "cooldowned" by 
 
 This Package syncs the ratelimits of your Bot over Machines and Clusters with no Breaking Changes, when using `Discord.js v13`
 
-**Note:** You have to switch to `discord-hybrid-sharding`, which just needs some small changes and even allow Clustering and resource saving and has all functions of the ShardingManager. 
+**Note:** 
+* You have to switch to `discord-hybrid-sharding`, which just needs some small changes and even allow Clustering and resource saving and has all functions of the ShardingManager. 
+* **Package only works with `Discord.js v13.5 and higher`** (can be compatible with older versions v13 versions, but not tested => fork and test it)
 
 ### Features:
 * Syncs ratelimits of your Bot over Machines and Clusters
 * No Breaking Changes for `Discord.js`
 * Can be used in combination with `discord-hybrid-sharding` & `discord-cross-hosting`
 * Fast Hash and Handlers fetching for allowing a fast processing of rest requests
+* When enabled (user-set limit exceeded), automatically rejects and queues requests, when too many invalid requests are done (max 10k in 10 mins => ban)
 
 **Todo:** 
-* Add `invalidRequestWarningInterval` inorder to get informed about 4xx Errors and 10k Invalid Requests, which causes a ban
-* Add `restGlobalRateLimit` & `rejectOnRateLimit`
+* Add `restGlobalRateLimit`
 
 ## How does it Work?
 When doing a rest request on the Discord Api, the package fetches Hashes and Handlers from the Manager, which can be a Bridge (`discord-cross-hosting`) or a Cluster.Manager (`discord-hybrid-sharding`)

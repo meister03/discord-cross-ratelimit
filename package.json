@@ -1,6 +1,6 @@
 {
   "name": "discord-cross-ratelimit",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A package, which syncs ratelimits of your Discord Bot on all Machines/Clusters",
   "main": "index.js",
   "types": "index.d.ts",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@sapphire/async-queue": "^1.1.7",
     "cheshire": "github:Deivu/Cheshire#2.0.2",
-    "discord.js": ">=13.0.0"
+    "discord.js": "^13.5.0"
   },
   "devDependencies": {
     "discord-cross-hosting": "^2.1.6",
