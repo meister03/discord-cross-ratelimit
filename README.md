@@ -196,4 +196,4 @@ client.login(process.env.token);
 If you encounter any problems feel free to open an issue in our <a href="https://github.com/meister03/discord-cross-ratelimit/issues">github repository or join the [discord server](https://discord.gg/YTdNBHh).</a>
 
 # Credits
-Credits goes to [Azuma](https://github.com/Deivu/Azuma), since this has been heavily inspired from it and the discord.js libary (See the Changes.md)
+All Credits goes to [Azuma](https://github.com/Deivu/Azuma), since the Base Code is from it, which has been slightly modified and the discord.js libary (See the Changes.md, Owner_License of Azuma & Djs License)
