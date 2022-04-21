@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@sapphire/async-queue": "^1.1.7",
-    "cheshire": "github:Deivu/Cheshire#2.0.2",
+    "cheshire": "github:Deivu/Cheshire",
     "discord.js": "^13.5.0"
   },
   "devDependencies": {
