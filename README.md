@@ -4,6 +4,15 @@
 # Discord-cross-ratelimit
 An efficient package, which syncs ratelimits of your Discord Bot on all Machines/Clusters.
 
+### Featured by Discord Creators
+[Private Community for Verified Bot Developers. ](https://discord.gg/R3hPevRtUV)
+[Meet new big bot and small bot developers and have a nice exchange...](https://discord.gg/R3hPevRtUV)
+<p>
+<a href="https://discord.gg/R3hPevRtUV">
+<img src="https://media.discordapp.net/attachments/980770619161448489/982938274677018624/banner.png?width=320&height=80">
+</a>
+</p> 
+
 ## Why?
 When Sharding/Scaling your Bot over many processes or even machines, every client has it own ratelimits, which are not synced with shards/clusters or machines.
 
