@@ -1,6 +1,6 @@
 {
   "name": "discord-cross-ratelimit",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A package, which syncs ratelimits of your Discord Bot on all Machines/Clusters",
   "main": "index.js",
   "types": "index.d.ts",
