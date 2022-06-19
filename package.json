@@ -33,6 +33,6 @@
   },
   "devDependencies": {
     "discord-cross-hosting": "^2.2.6",
-    "discord-hybrid-sharding": "^1.6.0"
+    "discord-hybrid-sharding": "github:meister03/discord-hybrid-sharding#rewrite"
   }
 }
