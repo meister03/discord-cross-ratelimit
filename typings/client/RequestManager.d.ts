@@ -2,8 +2,8 @@ import { LimitedCollection } from 'discord.js';
 import { EventEmitter } from 'events';
 import { ParsedHeaders } from '../Bridge/Ratelimit';
 import { RequestHandler } from './RequestHandler';
-import {Shard} from 'discord-cross-hosting';
-import {Client} from 'discord-hybrid-sharding';
+import { Shard } from 'discord-cross-hosting';
+import { Client } from 'discord-hybrid-sharding';
 
 export interface EmittedInfo {
     request: Request;

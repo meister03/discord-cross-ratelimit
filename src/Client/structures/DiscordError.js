@@ -44,7 +44,7 @@ class DiscordError extends Error {
     }
     /**
      * Flattens an errors object returned from the API into an array.
-     * @param {APIError} obj Discord errors object
+     * @param {Object} obj Discord errors object
      * @param {string} [key] Used internally to determine key names of nested fields
      * @returns {string[]}
      * @private

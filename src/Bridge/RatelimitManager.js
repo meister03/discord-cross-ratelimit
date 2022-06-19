@@ -12,6 +12,7 @@ const { Util } = require('discord.js');
 class RatelimitManager {
     /**
      * @param {bridge} bridge The Bridge Instance, which is created by the Package Discord-Cross-Hosting or the Cluster Manager
+     * @param {Object} options
      */
     constructor(bridge, options) {
         /**
@@ -19,11 +20,11 @@ class RatelimitManager {
          * @type {bridge}
          */
         this.bridge = bridge;
-        if (!this.bridge) throw new Error('ClIENT_MISSING_OPTION', 'valid Instance must be provided and be type of Bridge (discord-cross-hosting) or Cluster.Manager (discord-hybrid-sharding)');
+        if (!this.bridge) throw new Error('ClIENT_MISSING_OPTION | valid Instance must be provided and be type of Bridge (discord-cross-hosting) or Cluster.Manager (discord-hybrid-sharding)');
 
         /**
          * The Options for the ratelimit manager
-         * @type {options=Constants.DefaultOptions}
+         * @property {Constants.DefaultOptions} options
          */
         this.options = Util.mergeDefault(Constants.DefaultOptions, options);
 
@@ -69,8 +70,10 @@ class RatelimitManager {
                     break;
                 case 'hash':
                     message.reply({ data: this.hashes.get(data.id) });
+                    break;
                 case 'invalidRequest':
                     message.reply({ data: this.updateInvalidRequest(data.op) });
+                    break;
             }
         });
     }
@@ -100,7 +103,7 @@ class RatelimitManager {
     updateInvalidRequest(op) {
         if(!op) return this.invalidRequest;
         if(this.invalidRequest.count === 0) {
-            this.invalidRequest.reset = Date.now() + 1000*60*10; 
+            this.invalidRequest.reset = Date.now() + 1000*60*10;
             this.invalidRequest.count = 1;
             setTimeout(() => {
                 this.invalidRequest.count = 0;
@@ -128,8 +131,12 @@ class RatelimitManager {
     }
     /**
      * Updates a specific handler from cache
+     * @param {String} id
+     * @param {String} hash
+     * @param {String} method
+     * @param {String} route
      * @param {Object} data
-     * @returns {void}
+     * @returns {IDBRequest}
      */
     update({ id, hash, method, route, data }) {
         let limiter = this.handlers.get(id);

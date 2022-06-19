@@ -1,4 +1,4 @@
-const {EventEmitter} = require('events');
+const { EventEmitter } = require('events');
 const Https = require('https');
 
 const Discord = require('discord.js');
@@ -21,8 +21,8 @@ const Router = require('./Router.js');
   */
 class RequestManager extends EventEmitter {
     /**
-     * @param {DiscordClient} client The client for this request manager
-     * @param {instance} instance The Shard or ClusterClient Instance for the IPC
+     * @param {Discord} client The client for this request manager
+     * @param {Cluster.Client | Shard} instance The Shard or ClusterClient Instance for the IPC
      */
     constructor(client, instance) {
         super();
@@ -33,7 +33,7 @@ class RequestManager extends EventEmitter {
          * @memberOf RequestManager
          */
         /**
-         * Emitted when a request was fulfilled 
+         * Emitted when a request was fulfilled
          * @event RequestManager#onResponse
          * @param {EmittedInfo} data
          * @memberOf RequestManager
@@ -44,20 +44,20 @@ class RequestManager extends EventEmitter {
          * @param {EmittedInfo} data
          * @memberOf RequestManager
          */
-        
+
         /**
         * The client for this request manager
-        * @type {ClusterClient | Shard}
+        * @type {Cluster.Client | Shard}
         */
         this.instance = instance;
-        if (!this.instance) throw new Error('ClIENT_MISSING_OPTION', 'valid Instance must be provided and be type of SHARD (discord-cross-hosting) or ClusterClient');
+        if (!this.instance) throw new Error('ClIENT_MISSING_OPTION | valid Instance must be provided and be type of SHARD (discord-cross-hosting) or ClusterClient');
 
         /**
          * The client for this request manager
-         * @type {DiscordClient}
+         * @type {Discord}
          */
         this.client = client;
-        if (!this.client) throw new Error('ClIENT_MISSING_OPTION', 'valid Client must be provided and type of Discord.Client');
+        if (!this.client) throw new Error('ClIENT_MISSING_OPTION | valid Client must be provided and type of Discord.Client');
 
         /**
          * If this request manager is versioned
@@ -77,14 +77,14 @@ class RequestManager extends EventEmitter {
     }
     /**
      * The client for the NET IPC
-     * @type {*}
+     * @type {Cluster.Client | Shard}
      * @readonly
      */
     get server() {
         return this.instance;
     }
     /**
-     * A proxy api router 
+     * A proxy api router
      * @type {*}
      * @readonly
      */
@@ -130,7 +130,7 @@ class RequestManager extends EventEmitter {
 
     /**
      * Gets a cached ratelimit info in central cache
-     * @param {Object} data
+     * @param {Object} args
      * @returns {Promise<*>}
      */
     fetchInfo(...args) {
@@ -139,7 +139,7 @@ class RequestManager extends EventEmitter {
 
     /**
      * Updates a cached ratelimit info in central cache
-     * @param {Object} data
+     * @param {Object} args
      * @returns {Promise<void>}
      */
     updateInfo(...args) {
@@ -148,7 +148,7 @@ class RequestManager extends EventEmitter {
 
     /**
     * Appends the count of invalidRequests, which happend in a 10 minutes interval
-    * @param {Object} data
+    * @param {Object} args
     * @returns {Promise<void>}
     */
     updateInvalidCount(...args) {
@@ -158,7 +158,7 @@ class RequestManager extends EventEmitter {
      * Executes a request
      * @param {string} method
      * @param {route} route
-     * @param {Object} data
+     * @param {Object} options
      * @returns {Promise<Buffer|Object|null>}
      */
     async request(method, route, options = {}) {
